@@ -154,12 +154,16 @@ class IssueController extends Controller
         $project = Project::where('team_id', Auth::user()->currentTeam->id)->first();
         $issue->load('issuecomments');
 
+        $issuescount = Issue::where('team_id', Auth::user()->currentTeam->id)->count();
+        $assetscount = Asset::where('team_id', Auth::user()->currentTeam->id)->count();
+        $checklistscount = Checklist::where('team_id', Auth::user()->currentTeam->id)->count();
+
         $photos = DB::table('images')->where('issue_id', $issue->id)->get();
 
         // ->leftjoin('issuesimages', 'images.id', '=', 'issuesimages.issue_id')
         // ->get();
 
-        return view('issue.show', compact('issue','photos','project'));
+        return view('issue.show', compact('issue','photos','project','issuescount','assetscount','checklistscount'));
     }
 
     /**
@@ -171,9 +175,13 @@ class IssueController extends Controller
     public function edit(Issue $issue)
     {
         $project = Project::where('team_id', Auth::user()->currentTeam->id)->first();
+
+        $issuescount = Issue::where('team_id', Auth::user()->currentTeam->id)->count();
+        $assetscount = Asset::where('team_id', Auth::user()->currentTeam->id)->count();
+        $checklistscount = Checklist::where('team_id', Auth::user()->currentTeam->id)->count();
         
         // return $issue;
-        return view('issue.edit', compact('issue','project'));
+        return view('issue.edit', compact('issue','project','issuescount','assetscount','checklistscount'));
     }
 
     /**

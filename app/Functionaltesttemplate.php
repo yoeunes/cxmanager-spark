@@ -3,19 +3,16 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Collection;
 
-class Checklisttemplate extends Model
+class Functionaltesttemplate extends Model
 {
-
     public function assettype()
     {
     return $this->belongsTo(Assettype::class);
     }
 
-    public function questiontemplates()
+    public function functionaltestquestiontemplates()
     {
-    	return $this->hasMany(Questiontemplate::class);
+    	return $this->hasMany(Functionaltestquestiontemplate::class);
     }
-
 }

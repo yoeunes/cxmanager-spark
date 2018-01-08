@@ -5,8 +5,8 @@
     <div class="container">
         <!-- Application Dashboard -->
         <div class="row">
-        @include('shared.leftmenu')
-          <!-- Left Menu End -->
+            <!-- left menu -->
+            <!-- Left Menu End -->
 
           <!-- Main Content (middle panel) -->
           <div class="col-md-8">            
@@ -138,7 +138,7 @@
 
 
         <!-- Right Info Panel -->
-
+        @include('shared.leftmenu')
         <!-- Right Info Panel End -->
 
       </div>

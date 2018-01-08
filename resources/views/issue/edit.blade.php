@@ -6,30 +6,7 @@
         <!-- Application Dashboard -->
         <div class="row">
           <!-- Left Menu -->
-          <div class="col-md-4">
-            <div class="panel panel-success">
-            <div class="panel-heading">
-              <h3 class="panel-title">{{ $project->project_title }}</h3>
-            </div>
-              <div class="panel-body">
-                  <p><img src="/storage/upload/images/{{ $project->thumbnail }}" class="img-rounded" alt="Project Image" width="100%"></p>
-                  <p>
-                    {{ $project->project_notes }}
-                  </p>
-                    <ul style="list-style-type:circle">
-                      <li><strong>Project #:</strong> {{ $project->project_number }}</li>
-                      <li><strong>Title:</strong> {{ $project->project_title }}</li>
-                      <li><strong>Start Date:</strong> {{ $project->project_start_date }}</li>
-                      <li><strong>End Date</strong> {{ $project->project_end_date }}</li>
-                      <li><strong>% Complete:</strong> {{ $project->project_percent_complete }}</li>
-                      <li><strong>No. of Assets:</strong> ...</li>
-                      <li><strong>No. of Checklist:</strong> ...</li>
-                      <li><strong>No. of Issues:</strong> <a href="/issue/{{ $project->id }}">...</a></li>
-                    </ul> 
-                  <p><a class="btn btn-success btn-sm pull-right" href="#" role="button">Edit Project Details &raquo;</a></p>         
-              </div>  
-            </div>
-          </div>
+
           <!-- Left Menu End -->
 
           <!-- Main Content (middle panel) -->
@@ -159,7 +136,7 @@
 
 
         <!-- Right Info Panel -->
-
+        @include('shared.leftmenu')
         <!-- Right Info Panel End -->
 
       </div>

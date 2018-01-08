@@ -64,3 +64,5 @@ Route::get('/functionaltest/{asset}/fill', 'FunctionaltestController@index');
 
 Route::get('/report/checklist/{checklist}', 'ReportController@checklistreport');
 Route::get('/report/checklistsuite/{asset}', 'ReportController@checklistsuitereport');
+
+Route::get('/globaltemplate/{templateid}','GlobaltemplateController@show');

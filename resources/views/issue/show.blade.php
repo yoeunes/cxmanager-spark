@@ -5,41 +5,18 @@
     <div class="container">
         <!-- Application Dashboard -->
         <div class="row">
-        <div class="col-md-3">
-          <div class="panel panel-success">
-          <div class="panel-heading">
-            <h3 class="panel-title">{{ $project->project_title }}</h3>
-          </div>
-            <div class="panel-body">
-            <p><img src="/storage/upload/images/{{ $project->thumbnail }}" class="img-rounded" alt="Project Image" width="100%"></p>
-            <p>
-              {{ $project->project_notes }}
-            </p>
-              <ul style="list-style-type:circle">
-                <li><strong>Project #:</strong> {{ $project->project_number }}</li>
-                <li><strong>Title:</strong> {{ $project->project_title }}</li>
-                <li><strong>Start Date:</strong> {{ $project->project_start_date }}</li>
-                <li><strong>End Date</strong> {{ $project->project_end_date }}</li>
-                <li><strong>% Complete:</strong> {{ $project->project_percent_complete }}</li>
-                <li><strong>No. of Assets:</strong> ...</li>
-                <li><strong>No. of Checklist:</strong> ...</li>
-                <li><strong>No. of Issues:</strong> ...</li>
-              </ul> 
-            <p><a class="btn btn-success btn-sm pull-right" href="/home" role="button">Project Home &raquo;</a></p>        
-            </div>  
-          </div>
-        </div>
-      
+        <!-- left menu       -->
+
+        <!-- left menu end -->
+
       <div class="col-md-9">
           <div class="panel panel-primary">
           <div class="panel-heading">
-            <h3 class="panel-title">
-              <div class="icon-bar">
-                <a href="/home"><i class="fa fa-home"></i></a>
-                <a href="/issue/{{ $issue->id }}/edit"><i class="fa fa-pencil"></i></a>
-                <a href="#"><i class="fa fa-trash"></i></a>  
-                <a href="#"><i class="fa fa-print"></i></a> 
-              </div>
+            <h3 class="panel-title">Issue Profile
+                <a class="pull-right" href="/home"><i class="fa fa-home"> | </i></a>
+                <a class="pull-right" href="/issue/{{ $issue->id }}/edit"><i class="fa fa-pencil"> | </i></a>
+                <a class="pull-right" href="#"><i class="fa fa-trash"> | </i></a>  
+                <a class="pull-right" href="#"><i class="fa fa-print"> | </i></a>
             </h3> 
           </div>
           
@@ -175,7 +152,9 @@
           </div>
 
         </div>
-        </div>
+        <!-- Right Info Panel -->
+        @include('shared.leftmenu')
+        <!-- Right Info Panel End -->
       </div>
     </div>
 </home>

@@ -54,7 +54,7 @@
                             <form action="{{ url('asset/'.$asset->id) }}" method="POST" class="form-inline">
                               {{ csrf_field() }}
                               {{ method_field('DELETE') }}                     
-                              <button type="submit" id="delete-asset-{{ $asset->id }}" class="btn btn-sm btn-default">
+                              <button type="submit" id="delete-asset-{{ $asset->id }}" class="btn btn-sm btn-link">
                               <i class="fa fa-btn fa-trash"></i></button>
                             </form>
                           </td>
@@ -63,7 +63,7 @@
                               <form action="{{ url('asset/'.$asset->id) }}" method="POST" class="form-inline">
                                 {{ csrf_field() }}
                                 {{ method_field('DELETE') }}                     
-                                <button type="submit" id="delete-asset-{{ $asset->id }}" class="btn btn-sm btn-default">
+                                <button type="submit" id="delete-asset-{{ $asset->id }}" class="btn btn-sm btn-link">
                                 <i class="fa fa-btn fa-trash"></i></button>
                               </form>
                             </td>
