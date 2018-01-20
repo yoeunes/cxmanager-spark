@@ -35,6 +35,7 @@ Route::delete('/issue/photo/{photo}', 'IssueController@deletephoto');
 Route::delete('/issue/{issue}', 'IssueController@destroy');
 Route::post('/comment/{issue}', 'IssuecommentController@store');
 Route::get('/issue/resolved', 'IssueController@resolved');
+Route::get('/issue/detailed', 'IssueController@detailed');
 Route::get('/issue/all', 'IssueController@all');
 
 Route::get('/asset', 'AssetController@index');
@@ -64,5 +65,12 @@ Route::get('/functionaltest/{asset}/fill', 'FunctionaltestController@index');
 
 Route::get('/report/checklist/{checklist}', 'ReportController@checklistreport');
 Route::get('/report/checklistsuite/{asset}', 'ReportController@checklistsuitereport');
+Route::get('/report/checklistoverallreport', 'ReportController@checklistoverallreport');
+Route::get('/report/issue/{issue}', 'ReportController@issuereport');
+Route::get('/report/allissues', 'ReportController@allissuesreport');
+Route::get('/report/unresolvedissues', 'ReportController@unresolvedissuesreport');
+Route::get('/report/resolvedissues', 'ReportController@resolvedissuesreport');
+Route::get('/report/detailedissues', 'ReportController@detailedissuesreport');
 
+Route::get('/globaltemplate', 'GlobaltemplateController@index');
 Route::get('/globaltemplate/{templateid}','GlobaltemplateController@show');

@@ -47,8 +47,9 @@ class IssueController extends Controller
         $projissues = DB::table('issues')->where('team_id', Auth::user()->currentTeam->id)->where('issue_status','<>','Resolved')->get();
         
         $pagetitle = 'Unresolved Issues';
+        $reporttype = 'unresolvedissues';
         
-        return view('issue.index', compact('project', 'pagetitle', 'projissues', 'issuescount', 'assetscount', 'checklistscount'));
+        return view('issue.index', compact('project', 'pagetitle', 'reporttype', 'projissues', 'issuescount', 'assetscount', 'checklistscount'));
     }
 
     public function resolved()
@@ -66,8 +67,9 @@ class IssueController extends Controller
         $projissues = DB::table('issues')->where('team_id', Auth::user()->currentTeam->id)->where('issue_status','Resolved')->get();
 
         $pagetitle = 'Resolved Issues';
+        $reporttype = 'resolvedissues';
         
-        return view('issue.index', compact('project', 'pagetitle', 'projissues', 'issuescount', 'assetscount', 'checklistscount'));
+        return view('issue.index', compact('project', 'pagetitle', 'reporttype', 'projissues', 'issuescount', 'assetscount', 'checklistscount'));
     }
     
         public function all()
@@ -85,9 +87,30 @@ class IssueController extends Controller
             $projissues = DB::table('issues')->where('team_id', Auth::user()->currentTeam->id)->get();
     
             $pagetitle = 'All Issues';
+            $reporttype = 'allissues';
             
-            return view('issue.index', compact('project', 'pagetitle', 'projissues', 'issuescount', 'assetscount', 'checklistscount'));
+            return view('issue.index', compact('project', 'pagetitle', 'reporttype', 'projissues', 'issuescount', 'assetscount', 'checklistscount'));
         }
+
+    public function detailed()
+    {
+        $project = Project::where('team_id', Auth::user()->currentTeam->id)->first();
+        if ($project == "")
+        {
+            return view('project.create');
+        }
+        
+        $issuescount = Issue::where('team_id', Auth::user()->currentTeam->id)->count();
+        $assetscount = Asset::where('team_id', Auth::user()->currentTeam->id)->count();
+        $checklistscount = Checklist::where('team_id', Auth::user()->currentTeam->id)->count();
+        
+        $projissues = DB::table('issues')->where('team_id', Auth::user()->currentTeam->id)->where('issue_status','Resolved')->get();
+
+        $pagetitle = 'Detailed Issues';
+        $reporttype = 'detailedissues';
+        
+        return view('issue.detail', compact('project', 'pagetitle', 'reporttype', 'projissues', 'issuescount', 'assetscount', 'checklistscount'));
+    }
 
     /**
      * Show the form for creating a new resource.

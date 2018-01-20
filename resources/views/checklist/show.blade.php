@@ -13,24 +13,9 @@
 
 @section('content')
 <home :user="user" inline-template>
-    <div class="container">
+  <div class="container">
         <!-- Application Dashboard -->
-        <div class="row">
-        <!-- <div class="col-md-3">
-          <div class="panel panel-success">
-          <div class="panel-heading">
-            <h3 class="panel-title">{{ $project->project_title }}</h3>
-          </div>
-            <div class="panel-body">
-                <p><img src="/storage/upload/images/{{ $project->thumbnail }}" class="img-rounded" alt="Project Image" width="100%"></p>
-                <p>
-                  {{ $project->project_notes }}
-                </p>
-                <p><a class="btn btn-success btn-sm pull-right" href="/home" role="button">Project Home &raquo;</a></p>         
-            </div>  
-          </div>
-        </div> -->
-      
+    <div class="row">     
       <div class="col-md-12"> <!-- Main Panel Start -->
           <div class="panel panel-primary">
           <div class="panel-heading">
@@ -49,6 +34,7 @@
                     <li><strong>Checklist Name:</strong> {{ $checklist->checklist_title }}</li>
                     <li><strong>Checklist Type:</strong> {{ $checklist->checklist_type }}</li>
                     <li><strong>Checklist Contrator:</strong> {{ $checklist->checklist_contractor }}</li>
+                    <li><strong># of Comments:</strong> {{ $commentscount }}</li>
                     <li><strong>Status:</strong> {{ $checklist->checklist_status }}</li>
                   </ul>
 

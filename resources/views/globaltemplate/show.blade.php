@@ -49,7 +49,6 @@
                         <th>#</th>
                         <th>Title</th>
                         <th>Contractor</th>
-                        <th>Status</th>
                         @if(Auth::user()->ownsTeam(Auth::user()->currentTeam))
                           <th></th>
                           <th><a href="#" role="button" data-toggle="modal" data-target="#addChecklistModal">  <i class="fa fa-plus"></i></a></th>
@@ -66,7 +65,6 @@
                         <td>{{ $checklist->checklist_category_order}}</td>
                         <td class="text"><a href="#">{{ $checklist->checklist_title }}</a></td>
                         <td class="text">{{ $checklist->checklist_contractor }}</td>
-                        <td class="text">{{ $checklist->checklist_status }} %</td>
                         @if(Auth::user()->ownsTeam(Auth::user()->currentTeam))
                           <td><a href="#" role="button" ><i class="fa fa-pencil"></i> </a></td>
                           <td> 
@@ -103,7 +101,6 @@
                     <thead>
                       <th>#</th>
                       <th>Functional Test</th>
-                      <th>Status</th>
                       @if(Auth::user()->ownsTeam(Auth::user()->currentTeam))
                       <th><a href="#">  <i class="fa fa-check-square-o"></i></a></th>
                       <th><a href="#">  <i class="fa fa-plus"></i></a></th>
@@ -117,7 +114,6 @@
                         <tr>
                           <td>{{ $fpt->functionaltest_category_order }}</td>
                           <td><a href="#">{{ $fpt->functionaltest_title }}</a></td>
-                          <td>{{ $fpt->functionaltest_status }} %</td>
                           @if(Auth::user()->ownsTeam(Auth::user()->currentTeam))
                           <td><a href="#"><i class="fa fa-pencil"></i> </a></td>
                           <td> 
@@ -147,7 +143,9 @@
                   </table>
                   @endif
                 <hr>
-                <p><a class="btn btn-success btn-sm pull-right" href="/asset" role="button"><i class="fa fa-times"></i> Close</a></p> 
+                <p>
+                  <a class="btn btn-default btn-sm" href="/globaltemplate" role="button"><i class="fa fa-back"></i> Global List</a>
+                  <a class="btn btn-success btn-sm pull-right" href="/asset" role="button"><i class="fa fa-times"></i> Close</a></p> 
                 </div>
               </div> <!-- Bottom Row Ends  -->                                        
             </div>

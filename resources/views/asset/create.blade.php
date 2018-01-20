@@ -57,20 +57,30 @@
 
                       <div class="form-group">
                       <label for="asset_tag" class="col-sm-2 control-label">Asset Tag</label>
-                          <div class="col-sm-10">
-                      <input type="text" name="asset_tag" class="form-control" id="asset_tag" placeholder="Asset Tag" ></input>
-                      </div>
+                        <div class="col-sm-10">
+                          <input type="text" name="asset_tag" class="form-control" id="asset_tag" placeholder="Asset Tag" ></input>
+                        </div>
                       </div>
 
                       <div class="form-group">
                         <label for="asset_type" class="col-sm-2 control-label">Asset Type</label>
-                        <select class="field" name="asset_type" id="asset_type">
+                        <div class="col-sm-10">
+                          <select class="field" name="asset_type" id="asset_type">
                           @foreach ($assettypes as $assettype)
                             <option value="{{ $assettype->type_name }}">{{ $assettype->type_name }}</option>
                           @endforeach
-                        </select>
+                          </select>
+                        </div>
+                        
                       </div>
 
+                      <div class="form-group">
+                        <label for="include_fpt" class="col-sm-2 control-label">Include FPTs</label>
+                        <div class="col-sm-10">
+                          <input type="checkbox" name="include_fpt" id="include_fpt" value="1"></input>
+                        </div>                        
+                      </div>
+                      
                       <div class="form-group">
                       <label for="asset_notes" class="col-sm-2 control-label">Notes</label>
                           <div class="col-sm-10">

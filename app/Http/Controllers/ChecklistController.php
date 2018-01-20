@@ -52,9 +52,10 @@ class ChecklistController extends Controller
         $project = Project::where('team_id', Auth::user()->currentTeam->id)->first();
         $checklist->load('asset');
         $checklist->load('questions');
+        $commentscount = Question::where('checklist_id', $checklist->id )->where('answer_comment', '<>', '')->count();
         // return $checklist;
 
-        return view('checklist.show', compact('checklist', 'project'));
+        return view('checklist.show', compact('checklist', 'project', 'commentscount'));
     }
 
     public function edit( Checklist $checklist )
@@ -62,9 +63,11 @@ class ChecklistController extends Controller
         $project = Project::where('team_id', Auth::user()->currentTeam->id)->first();
         $checklist->load('asset')->load('questions');
         $contractors = DB::table('contractors')->get();
+        $commentscount = Question::where('checklist_id', $checklist->id )->where('answer_comment', '<>', '')->count();
+
         // return $checklist->checklist_contractor;
 
-        return view('checklist.edit', compact('project','checklist','contractors'));
+        return view('checklist.edit', compact('project','checklist','contractors', 'commentscount'));
     }
 
     public function store(Request $request)
@@ -128,10 +131,15 @@ class ChecklistController extends Controller
         foreach ($questions as $question)
         {
                 if ( $request->Input($question->id.'-answer_design')) {
-                    $question->answer_design = $request->Input($question->id.'-answer_design');
+                    if( Auth::user()->roleOn(Auth::user()->currentTeam) == 'cxa' || Auth::user()->ownsTeam(Auth::user()->currentTeam)){
+                       $question->answer_design = $request->Input($question->id.'-answer_design'); 
+                    }
+                    
                 }
                 if ( $request->Input($question->id.'-answer_submitted')) {
-                    $question->answer_submitted = $request->Input($question->id.'-answer_submitted');
+                    if( Auth::user()->roleOn(Auth::user()->currentTeam) == 'cxa' || Auth::user()->ownsTeam(Auth::user()->currentTeam)){
+                        $question->answer_submitted = $request->Input($question->id.'-answer_submitted');
+                    }
                 }
                 if ( $request->Input($question->id.'-answer_installed')) {
                     $question->answer_installed = $request->Input($question->id.'-answer_installed');
@@ -145,33 +153,35 @@ class ChecklistController extends Controller
                 if  ($request->Input($question->id.'-answer_comment')) {
                     $question->answer_comment = $request->Input($question->id.'-answer_comment');
                 }
-
-                $question->save();                
+                $question->update();                
         }
 
-        // Update checklist status
-        if ($checklist->checklist_title == "Model Verification")
+        // Update Question Status
+        $questions =  Question::where('checklist_id', $checklist->id)->get();
+
+        foreach ($questions as $question)
         {
-            $numerator = Question::where('checklist_id', $checklist->id)->where('answer_installed', "")->count();
-            $denominator = Question::where('checklist_id', $checklist->id)->count();
-            $percentage = (1 - $numerator/$denominator) * 100;
-            $checklist->checklist_status = number_format($percentage, 2);
-            $checklist->update();
+                $questionstatuscount = 0;
+                if ( $question->answer_installed || $question->answer_accepted ) {
+                    $questionstatuscount = 1;
+                }
+
+                $question->question_status = $questionstatuscount;
+                $question->update();                
         }
-        else
-        {
-            $numerator = Question::where('checklist_id', $checklist->id)->where('answer_accepted', NULL)->count();
+
+        // Update checklist status       
+            $numerator = Question::where('checklist_id', $checklist->id)->where( 'question_status', 1 )->count();
             $denominator = Question::where('checklist_id', $checklist->id)->count();
-            $percentage = (1- $numerator/$denominator) * 100;
+            $percentage = ($numerator/$denominator) * 100;
             $checklist->checklist_status = number_format($percentage, 2); 
             $checklist->update();
-        }
 
         //update asset status
         $asset = Asset::where('id', $checklist->asset_id)->first();
-        $assetstatusdenum = Checklist::where('asset_id', $checklist->asset_id)->count();
-        $assetstatusnum = Checklist::where('asset_id', $checklist->asset_id)->where('checklist_status', 100)->count();
-        $assetstatus = ($assetstatusnum/$assetstatusdenum) * 100;
+        $checklistcount = Checklist::where('asset_id', $checklist->asset_id)->count();
+        $checkliststatussum = Checklist::where('asset_id', $checklist->asset_id)->sum('checklist_status');
+        $assetstatus = $checkliststatussum / $checklistcount;
         $asset->asset_status = number_format($assetstatus, 2);
         $asset->update();
         // return $asset->asset_status;

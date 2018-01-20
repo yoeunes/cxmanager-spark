@@ -20,18 +20,18 @@
           <div class="panel panel-primary">
           <div class="panel-heading">
             <h3 class="panel-title">Asset Profile
-                <a class="pull-right" href="/home"><i class="fa fa-home"></i>  |  </a>
+                <a class="pull-right" href="/home"><i class="fa fa-home">  |  </i></a>
                 @if(Auth::user()->ownsTeam(Auth::user()->currentTeam))
-                  <a class="pull-right" href="#" role="button" data-toggle="modal" data-target="#editAssetModal">  <i class="fa fa-pencil"></i>  |  </a>  
+                  <a class="pull-right" href="#" role="button" data-toggle="modal" data-target="#editAssetModal"><i class="fa fa-pencil">  |  </i></a>  
                 @elseif(Auth::user()->roleOn(Auth::user()->currentTeam) == 'cxa')
-                  <a class="pull-right" href="#" role="button" data-toggle="modal" data-target="#editAssetModal">  <i class="fa fa-pencil"></i>  |  </a>
+                  <a class="pull-right" href="#" role="button" data-toggle="modal" data-target="#editAssetModal"><i class="fa fa-pencil">  |  </i></a>
                 @endif                
-                <a class="pull-right" href="/report/checklistsuite/{{ $asset->id }}"><i class="fa fa-print"></i>  |  </a> 
+                <a class="pull-right" href="/report/checklistsuite/{{ $asset->id }}"><i class="fa fa-print">  |  </i></a> 
             </h3> 
           </div>         
             <div class="panel-body">
               <div class="row"> <!-- Top Row -->
-                <div class="col-md-8">
+                <div class="col-md-6">
                   <h3><u>Asset:</u> {{ $asset->asset_tag }}</h3>
                   <ul>
                     <li><strong>Asset Number:</strong> {{ $asset->asset_number }}</li>
@@ -40,7 +40,7 @@
                     <li><strong>Asset Status:</strong> {{ $asset->asset_status }} %</li>
                   </ul>
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-6">
                 <h4>Asset Notes</h4>
                   <p>
                     {{ $asset->asset_notes}}
@@ -104,21 +104,19 @@
                 </table>
                 <h3>Functional Performance Tests</h3>
                 <hr>
-                  @if( $asset->functionaltests == "")                  
-                    <p>No functional tests setup for this asset. Add FPTs <a href="#">here</a></p>
-                  @else
+                  @if( $asset->functionaltests )
                   <table class="table">
                     <thead>
                       <th>#</th>
                       <th>Functional Test</th>
                       <th>Status</th>
                       @if(Auth::user()->ownsTeam(Auth::user()->currentTeam))
-                      <th><a href="/functionaltest/{{ $asset->id }}/fill">  <i class="fa fa-check-square-o"></i></a></th>
-                      <th><a href="#">  <i class="fa fa-plus"></i></a></th>
+                        <th><a href="/functionaltest/{{ $asset->id }}/fill">  <i class="fa fa-check-square-o"></i></a></th>
+                        <th><a href="#">  <i class="fa fa-plus"></i></a></th>
                       @elseif(Auth::user()->roleOn(Auth::user()->currentTeam) == 'cxa')
-                      <th><a href="/functionaltest/{{ $asset->id }}/fill">  <i class="fa fa-check-square-o"></i></a></th>
-                      <th><a href="#">  <i class="fa fa-plus"></i></a></th>
-                    @endif 
+                        <th><a href="/functionaltest/{{ $asset->id }}/fill">  <i class="fa fa-check-square-o"></i></a></th>
+                        <th><a href="#">  <i class="fa fa-plus"></i></a></th>
+                      @endif 
                     </thead>
                     <tbody>
                       @foreach( $asset->functionaltests as $fpt )
@@ -127,32 +125,34 @@
                           <td><a href="/functionaltest/{{ $fpt->id }}">{{ $fpt->functionaltest_title }}</a></td>
                           <td>{{ $fpt->functionaltest_status }} %</td>
                           @if(Auth::user()->ownsTeam(Auth::user()->currentTeam))
-                          <td><a href="#"><i class="fa fa-pencil"></i> </a></td>
-                          <td> 
-                            <form action="{{ url('fpt/'.$fpt->id) }}" method="POST" class="form-inline">
-                              {{ csrf_field() }}
-                              {{ method_field('DELETE') }}
+                            <td><a href="#"><i class="fa fa-pencil"></i> </a></td>
+                            <td> 
+                              <form action="{{ url('fpt/'.$fpt->id) }}" method="POST" class="form-inline">
+                                {{ csrf_field() }}
+                                {{ method_field('DELETE') }}
 
-                              <button type="submit" id="delete-fpt-{{ $fpt->id }}" class="btn btn-link">
-                              <i class="fa fa-btn fa-trash"></i></button>
-                            </form>
-                          </td>
-                        @elseif(Auth::user()->roleOn(Auth::user()->currentTeam) == 'cxa')
-                          <td><a href="#"><i class="fa fa-pencil"></i> </a></td>
-                          <td> 
-                            <form action="#" method="POST" class="form-inline">
-                              {{ csrf_field() }}
-                              {{ method_field('DELETE') }}
+                                  <button type="submit" id="delete-fpt-{{ $fpt->id }}" class="btn btn-link">
+                                  <i class="fa fa-btn fa-trash"></i></button>
+                                </form>
+                              </td>
+                            @elseif(Auth::user()->roleOn(Auth::user()->currentTeam) == 'cxa')
+                                <td><a href="#"><i class="fa fa-pencil"></i> </a></td>
+                                <td> 
+                                <form action="#" method="POST" class="form-inline">
+                                {{ csrf_field() }}
+                                {{ method_field('DELETE') }}
 
-                              <button type="submit" id="delete-fpt-{{ $fpt->id }}" class="btn btn-link">
-                              <i class="fa fa-btn fa-trash"></i></button>
-                            </form>
-                          </td>
-                        @endif    
+                                <button type="submit" id="delete-fpt-{{ $fpt->id }}" class="btn btn-link">
+                                <i class="fa fa-btn fa-trash"></i></button>
+                                </form>
+                              </td>
+                            @endif    
                         </tr>
                       @endforeach
                     </tbody>
                   </table>
+                   @else                 
+                    <p>No functional tests setup for this asset. Add FPTs <a href="#">here</a></p>                  
                   @endif
                 <hr>
                 <p><a class="btn btn-success btn-sm pull-right" href="/asset" role="button"><i class="fa fa-times"></i> Close</a></p> 

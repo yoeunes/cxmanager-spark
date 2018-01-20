@@ -6,23 +6,22 @@
 
 @section('content')
 <home :user="user" inline-template>
-    <div class="container">
+  <div class="container">
         <!-- Application Dashboard -->
-      <div class="row">
+    <div class="row">
         <div class="col-md-9">
           <div class="panel panel-primary">
           @if($project)
             <div class="panel-heading">
               <h3 class="panel-title">About the Project
                 @if(Auth::user()->ownsTeam(Auth::user()->currentTeam))
-                    <a href="/project/{{ $project->id }}/edit" class="pull-right"><i class="fa fa-pencil"></i></a></h3>  
+                    <a href="/project/{{ $project->id }}/edit" class="pull-right"><i class="fa fa-pencil"></i></a>  
                 @elseif(Auth::user()->roleOn(Auth::user()->currentTeam) == 'cxa')
-                <a href="/project/{{ $project->id }}/edit" class="pull-right"><i class="fa fa-pencil"></i></a></h3>
+                <a href="/project/{{ $project->id }}/edit" class="pull-right"><i class="fa fa-pencil"></i></a>
                 @endif             
               </h3>
             </div>
-            <div class="panel-body">
-              
+            <div class="panel-body">             
                 <h3>{{ $project->project_title }}</h3>
                   <div class="row">      
                     <div class="col-md-6">                
@@ -46,101 +45,41 @@
             @else
             <div class="panel-heading">
               <h3 class="panel-title">About the Project</h3>
-              </h3>
             </div>
               <div class="panel-body">
                 <p>Project details not yet entered. Enter it <a href="/project/create">here</a></p>               
               </div>                
             @endif
-          </div>
+          </div><!-- panel end -->
 
           <div class="panel panel-primary">
-          <div class="panel-heading">
-            <h3 class="panel-title">Summaries</h3>
-          </div>
-            <div class="panel-body">
-
-              <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
-                <div class="panel panel-default">
-                  <div class="panel-heading" role="tab" id="headingOne">
-                    <h4 class="panel-title">
-                      <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
-                        Issues -  <span class="badge">{{ $issuescount }}</span><span><a class="pull-right" href="/issue" role="button"> <i class="fa fa-sign-in" aria-hidden="true"></i> </a></span>
-                      </a>
-                    </h4>
-                  </div>
-                  <div id="collapseOne" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
-                    <div class="panel-body">
-                        <center>
-                            {!! $noofissueschart->html() !!}
-                        </center>
-                      <hr>
-                        <center>
-                            {!! $resolvedissueschart->html() !!}
-                        </center>
-                      <hr>
-                        <center>
-                          {!! $issueprioritieschart->html() !!}
-                        </center>
-                        <hr>
-                      <p><a class="btn btn-success pull-right" href="/issue" role="button">Go to Issues &raquo;</a></p>
-                    </div>
-                  </div>
-                </div>
-                <div class="panel panel-default">
-                  <div class="panel-heading" role="tab" id="headingTwo">
-                    <h4 class="panel-title">
-                      <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-                        Assets -  <span class="badge">{{ $assetscount }}</span><span><a class="pull-right" href="/asset" role="button"> <i class="fa fa-sign-in" aria-hidden="true"></i> </a></span>
-                      </a>
-                    </h4>
-                  </div>
-                  <div id="collapseTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo">
-                    <div class="panel-body">
-                      <hr>
-                        <center>
-                            {!! $assetchart->html() !!}
-                        </center>
-                      <hr>
-                      <p><a class="btn btn-success pull-right" href="/asset" role="button">Go to Assets &raquo;</a></p>
-                    </div>
-                  </div>
-                </div>
-                <div class="panel panel-default">
-                  <div class="panel-heading" role="tab" id="headingThree">
-                    <h4 class="panel-title">
-                      <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
-                        Checklists -  <span class="badge">{{ $checklistscount }}</span><span><a class="pull-right" href="/asset" role="button"> <i class="fa fa-sign-in" aria-hidden="true"></i> </a></span>
-                      </a>
-                    </h4>
-                  </div>
-                  <div id="collapseThree" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingThree">
-                    <div class="panel-body">
-                        <center>
-                            {!! $checklistchart->html() !!}
-                        </center>
-                      <hr>
-                      <p><a class="btn btn-success pull-right" href="/checklist" role="button">Go to Checklists &raquo;</a></p>
-                    </div>
-                  </div>
-                </div>
-
-              </div>
+            <div class="panel-heading">
+              <h3 class="panel-title">Summaries</h3>
             </div>
-          </div>
+            <div class="panel-body">
+              <div class="row">
+                <div class="col-md-6">{!! $noofissueschart->html() !!}</div>
+                <div class="col-md-6">{!! $issueprioritieschart->html() !!}</div><hr>
+                <div class="col-md-6">{!! $checklistchart->html() !!}</div>
+              </div>
+              <hr>
+
+              
+            </div><!-- panel body end -->
+          </div><!-- panel end -->
           <!---------------->          
-       </div>
+       </div> <!-- main section end -->
 
        @include('shared.leftmenu_2') 
 
-      </div>
-    </div>
+      </div><!-- row end -->
+  </div><!-- container end -->
 </home>
 <!-- End Of Main Application -->
 {!! Charts::scripts() !!}
 {!! $checklistchart->script() !!}
-{!! $assetchart->script() !!}
+<!-- {!! $assetchart->script() !!} -->
 {!! $noofissueschart->script() !!}
 {!! $issueprioritieschart->script() !!}
-{!! $resolvedissueschart->script() !!}
+<!-- {!! $resolvedissueschart->script() !!} -->
 @endsection

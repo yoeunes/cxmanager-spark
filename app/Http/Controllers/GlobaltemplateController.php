@@ -25,11 +25,14 @@ class GlobaltemplateController extends Controller
      */
     public function index()
     {
-        $assettypes = DB::table('assettypes')->get();
-        // $checklisttemplates = DB::table('functionaltestquestiontemplate')->get();
+        $issuescount = Issue::where('team_id', Auth::user()->currentTeam->id)->count();
+        $assetscount = Asset::where('team_id', Auth::user()->currentTeam->id)->count();
+        $checklistscount = Checklist::where('team_id', Auth::user()->currentTeam->id)->count();
+        $project = Project::where('team_id', Auth::user()->currentTeam->id)->first();
 
-        return $assettypes;
-        // return view('globaltemplate.index', compact('assettypes'));
+        $assettypes = Assettype::get();
+
+        return view('globaltemplate.index', compact('assettypes', 'project', 'issuescount','assetscount','checklistscount'));
     }
 
     /**

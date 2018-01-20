@@ -16,6 +16,8 @@ use App\Project;
 
 use App\Asset;
 
+use App\Assettype;
+
 use App\Checklist;
 
 use App\Issue;
@@ -70,7 +72,7 @@ class AssetController extends Controller
     
     public function store(Request $request)
     {
-        //dd(request()->all());
+        // dd(request()->all());
 
         $project = Project::where('team_id', Auth::user()->currentTeam->id)->first();
 
@@ -80,10 +82,12 @@ class AssetController extends Controller
             'asset_tag' => 'required | max:255',
             'asset_type' => 'required|max:255',
             'asset_notes' => 'max:1000',
-            'additional_tags' => 'max:1000',
+            'additional_tags' => 'max:2500',
         ]);
-        // Save the asset from form values and get the new asset id
+        // Save the first asset from form values and get the new asset id
         // dd(request()->all());
+
+
         $asset = new Asset;
         $asset->team_id = Auth::user()->currentTeam->id;
         $asset->asset_number = $request->Input('asset_number');
@@ -95,48 +99,56 @@ class AssetController extends Controller
         $asset->thumbnail = 'asset_thumbnail.png';
         $asset->save();
 
-        $assetid = DB::getPdo()->lastInsertId();
+        //add checklists to the asset
+        $assetid = DB::getPdo()->lastInsertId();        
+        $assettypeid = Assettype::where('type_name', $asset->asset_type)->value('id');
+        $assettag = $asset->asset_tag;
+        $asset->addChecklists( $assetid, $assettypeid, $assettag );
 
-        $assettypeid = DB::table('assettypes')->where('type_name', $asset->asset_type)->value('id');
-
-        //return $assettypeid;
-        
-        //add checklists to the asset from the available templates and get the new checklist id
-
-        $checklists = Checklisttemplate::where('assettype_id', $assettypeid)->get();
-
-        foreach ($checklists as $checklist) {
-            $cl = new Checklist;
-            $cl->team_id = Auth::user()->currentTeam->id;
-            $cl->asset_id = $assetid;
-            $cl->checklist_title = $checklist->checklist_title;
-            $cl->checklist_tag = $asset->asset_tag . " - " . $checklist->checklist_title;
-            $cl->checklist_contractor = $checklist->checklist_contractor;
-            $cl->checklist_status = "0.00";
-            $cl->checklist_type = $checklist->checklist_type;
-            $cl->checklist_category_order = $checklist->checklist_category_order;
-            $cl->checklist_notes = $checklist->checklist_notes;
-            
-            $cl->save();
-            $checklistid = DB::getPdo()->lastInsertId();
-
-            // add questions to each checklist based on the templates
-            $questions = Questiontemplate::where('checklist_id', $checklist->id)->get();
-
-                foreach ($questions as $question) {
-                     $qstn = new Question;
-                     $qstn->team_id = Auth::user()->currentTeam->id;
-                     $qstn->checklist_id = $checklistid;
-                     $qstn->question_text = $question->question_text;
-                     $qstn->question_order = $question->question_order;
-                     $qstn->question_status = "0.00";
-                     
-                     $qstn ->save();
-             } 
+        //add functional tests to the asset
+        if( $request->Input('include_fpt')){
+            $asset->addFunctionaltests( $assetid, $assettypeid, $assettag );
         }
 
+        if( $request->Input('additional_tags')) {
+            $additional_tags = $request->Input('additional_tags');
+            $moreassets = explode(',', $additional_tags);
+            $lastassetnumber =  $asset->asset_number;
+
+            foreach ($moreassets as $moreasset){
+                $ast = new Asset;
+                $ast->team_id = Auth::user()->currentTeam->id;
+                $ast->asset_number = $lastassetnumber + 1;
+                $ast->asset_title = $request->Input('asset_title');
+                $ast->asset_type = $request->Input('asset_type');
+                $ast->asset_tag = $moreasset;
+                $ast->asset_status = "0.00";
+                $ast->asset_notes = $request->Input('asset_notes');
+                $ast->thumbnail = 'asset_thumbnail.png';
+                $ast->save();
+
+                //add checklists to the asset
+                $assetid = DB::getPdo()->lastInsertId();        
+                $assettypeid = Assettype::where('type_name', $ast->asset_type)->value('id');
+                $assettag = $ast->asset_tag;
+                $ast->addChecklists( $assetid, $assettypeid, $assettag );
+
+                //add functional tests to the asset
+                if( $request->Input('include_fpt')){
+                $asset->addFunctionaltests( $assetid, $assettypeid, $assettag );
+        }
+            }
+        }
+
+
         $asset->load('checklists');
-        return view('asset.show', compact('asset','project'));
+        $asset->load('functionaltests');
+
+        $issuescount = Issue::where('team_id', Auth::user()->currentTeam->id)->count();
+        $assetscount = Asset::where('team_id', Auth::user()->currentTeam->id)->count();
+        $checklistscount = Checklist::where('team_id', Auth::user()->currentTeam->id)->count();
+        
+        return view('asset.show', compact('asset','project', 'issuescount','assetscount','checklistscount'));
     }
 
     /**
@@ -203,6 +215,13 @@ class AssetController extends Controller
             Question::where('checklist_id', $checklist->id)->delete();
             $checklist->delete();
         }
+
+        $functionaltests = Functionaltest::where('asset_id', $asset->id)->get();
+        foreach ($functionaltests as $functionaltest) {
+            Functionaltestquestion::where('functionaltest_id', $functionaltest->id)->delete();
+            $functionaltest->delete();
+        }
+
         $asset->delete();
 
         return redirect('/asset');

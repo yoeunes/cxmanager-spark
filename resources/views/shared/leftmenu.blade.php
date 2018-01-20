@@ -6,7 +6,7 @@
       <div class="panel-body">
           <p><img src="/storage/upload/images/{{ $project->thumbnail }}" class="img-rounded" alt="Project Image" width="100%"></p>
           <p>
-            {{ $project->project_notes }}
+            {{ str_limit( $project->project_notes, 250) }}
           </p>
             <ul style="list-style-type:circle">
               <li><strong>Project #:</strong> {{ $project->project_number }}</li>

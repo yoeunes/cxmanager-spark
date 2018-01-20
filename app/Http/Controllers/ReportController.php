@@ -55,14 +55,58 @@ class ReportController extends Controller
         return view('report.checklistsuite', compact('asset', 'project'));
     }
 
-    public function issuereport()
+    public function checklistoverallreport()
     {
-        //
+        $project = Project::where('team_id', Auth::user()->currentTeam->id)->first();
+        $assettypes = Asset::where('team_id', Auth::user()->currentTeam->id)->select('id','asset_title')->distinct()->get();
+        // $assettypes->load('checklists');
+
+        // return $assettypes;
+
+        // return view('report.checklistoverall', compact('asset', 'project'));
+    }
+
+    public function issuereport(Issue $issue)
+    {
+        $project = Project::where('team_id', Auth::user()->currentTeam->id)->first();
+
+        return view('report.issue', compact('checklist', 'issue'));
     }
 
     public function allissuesreport()
     {
-        //
+        $project = Project::where('team_id', Auth::user()->currentTeam->id)->first();
+        $allissues = Issue::where('team_id', Auth::user()->currentTeam->id)->get();
+        $pagetitle = "All Issues";
+
+        return view('report.allissues', compact('project', 'allissues', 'pagetitle'));
+    }
+
+    public function unresolvedissuesreport()
+    {
+        $project = Project::where('team_id', Auth::user()->currentTeam->id)->first();
+        $allissues = Issue::where('team_id', Auth::user()->currentTeam->id)->where('issue_status','<>','Resolved')->get();
+        $pagetitle = "Unresolved Issues";
+
+        return view('report.allissues', compact('project', 'allissues', 'pagetitle'));
+    }
+
+    public function resolvedissuesreport()
+    {
+        $project = Project::where('team_id', Auth::user()->currentTeam->id)->first();
+        $allissues = Issue::where('team_id', Auth::user()->currentTeam->id)->where('issue_status','Resolved')->get();
+        $pagetitle = "Resolved Issues";
+
+        return view('report.allissues', compact('project', 'allissues', 'pagetitle'));
+    }
+
+    public function detailedissuesreport()
+    {
+        $project = Project::where('team_id', Auth::user()->currentTeam->id)->first();
+        $allissues = Issue::where('team_id', Auth::user()->currentTeam->id)->where('issue_status','<>','Resolved')->get();
+        $pagetitle = "Unresolved Issues - Detailed";
+
+        return view('report.detailedissues', compact('project', 'allissues', 'pagetitle'));
     }
 
 }

@@ -5,24 +5,33 @@
     <input type="hidden" name="checklistid" value="{{ $checklist->id }}"> 
 
     @if ( $checklist->checklist_title == "Model Verification" )
-    <table class="table table-striped table-hover">
-        <tr>
+    <table id="checklisttable" class="table">
+        <thead><tr>
             <th>Question</th>
             <th>Design</th>
             <th>Submittal</th>
             <th>Delivered</th>
-            <th>Comments</th>
-        </tr>
-        @foreach ( $checklist->questions as $question )
-        <input type="hidden" name="questionid-{{ $question->id }}" value="{{ $question->id }}"> 
-        <tr class="info">
-            <td>{{ $question->question_order}}. {{ $question->question_text}}</td>                         
+            </tr>
+        </thead> 
+        <tbody>     
+            @foreach ( $checklist->questions as $question )
+            <input type="hidden" name="questionid-{{ $question->id }}" value="{{ $question->id }}"> 
+            <tr tr class="accordion-toggle info" data-toggle="collapse" data-target="#collapse{{ $question->id }}" >
+                <td>{{ $question->question_order}}. {{ $question->question_text}}</td>                         
                 <td><input type="text" name="{{$question->id}}-answer_design" class="form-control" placeholder="Design" value="{{ $question->answer_design }}"></td>
                 <td><input type="text" name="{{$question->id}}-answer_submitted" class="form-control" placeholder="Submittal" value="{{ $question->answer_submitted }}"></td>
-                <td><input type="text" name="{{$question->id}}-answer_installed" class="form-control" placeholder="Delivered" value="{{ $question->answer_installed }}"></td>
-                <td><input type="text" name="{{$question->id}}-answer_comment" class="form-control" placeholder="Comments" value="{{ $question->answer_comment }}"></td>                      
-        </tr>
-        @endforeach
+                <td><input type="text" name="{{$question->id}}-answer_installed" class="form-control" placeholder="Delivered" value="{{ $question->answer_installed }}"></td>                     
+            </tr>
+            <tr>
+                <td></td>
+                <td colspan="3">
+                    <div id="collapse{{ $question->id }}" @if( $question->answer_comment ) class="collapse in" @else class="collapse" @endif >
+                    <input type="text" name="{{$question->id}}-answer_comment" class="form-control" placeholder="Comments" value="{{ $question->answer_comment }}">
+                    </div>
+                </td>
+            </tr>
+            @endforeach
+        </tbody> 
     </table>
     @else
     <ul class="list-group">
