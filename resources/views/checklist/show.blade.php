@@ -1,25 +1,26 @@
-@extends('spark::layouts.app')
+@extends('adminlte::page')
 
-@section('scripts')
-    <link href='https://cdn.datatables.net/1.10.15/css/jquery.dataTables.min.css' rel='stylesheet' type='text/css'>
-    <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
-    <script src="https://cdn.datatables.net/1.10.15/js/jquery.dataTables.min.js"></script>
-    <script>
-      $(document).ready(function() {
-          $('#questiontable').DataTable();
-      } );
-    </script>
-@endsection
+@section('title', 'Cx MNGR')
+
+@section('content_header')
+      <h1>
+        {{ $project->project_title }} - Checklist: 
+        <small>{{ $pagetitle }}</small>       
+      </h1>
+      <ol class="breadcrumb">
+        <li><a href="home"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li><a href="checklist">Checklists</a></li>
+        <li class="active">{{ $pagetitle }}</li>
+      </ol>
+@stop
 
 @section('content')
-<home :user="user" inline-template>
-  <div class="container">
         <!-- Application Dashboard -->
     <div class="row">     
       <div class="col-md-12"> <!-- Main Panel Start -->
           <div class="panel panel-primary">
           <div class="panel-heading">
-            <h3 class="panel-title">Checklist Profile
+            <h3 class="panel-title">Customize Checklist
                 <a href="/home" class="pull-right"><i class="fa fa-home"></i> | </a>
                 <a href="#"  class="pull-right" role="button" data-toggle="modal" data-target="#editChecklistModal"><i class="fa fa-pencil"></i> | </a>
                 <a href="/report/checklist/{{ $checklist->id }}" class="pull-right"><i class="fa fa-print"></i> | </a>
@@ -78,7 +79,7 @@
                                   {{ csrf_field() }}
                                   {{ method_field('DELETE') }}
 
-                                  <button type="submit" id="delete-question-{{ $checklist->id }}">
+                                  <button type="submit" class="btn btn-sm btn-link" id="delete-question-{{ $checklist->id }}">
                                   <i class="fa fa-btn fa-trash"></i></button>
                                 </form>
                               </td>                         
@@ -109,15 +110,15 @@
                           <td >{{ $question->answer_accepted }}</td>
                           <td >{{ $question->answer_comment }}</td>
                           <td><a href="/question/{{ $question->id }}/edit"><i class="fa fa-pencil"></i></a></td>
-                              <td>
-                                <form action="{{ url('question/'.$question->id) }}" method="POST" class="form-inline">
-                                  {{ csrf_field() }}
-                                  {{ method_field('DELETE') }}
+                          <td>
+                            <form action="{{ url('question/'.$question->id) }}" method="POST" class="form-inline">
+                              {{ csrf_field() }}
+                              {{ method_field('DELETE') }}
 
-                                  <button type="submit" id="delete-question-{{ $checklist->id }}">
-                                  <i class="fa fa-btn fa-trash"></i></button>
-                                </form>
-                              </td>                       
+                              <button type="submit" class="btn btn-sm btn-link" id="delete-question-{{ $checklist->id }}">
+                              <i class="fa fa-btn fa-trash"></i></button>
+                            </form>
+                          </td>                       
                         </tr>
                       @endforeach                       
                       </tbody>
@@ -264,4 +265,24 @@
   </div>
 </div>
 <!-- Modal End -->
+@endsection
+
+@section('footer')
+  @include('adminlte::partials.footer')
+@endsection
+
+@section('page_scripts')
+  <!-- page script -->
+<script>
+  $(function () {
+    $('#questiontable').DataTable({
+      'paging'      : true,
+      'lengthChange': true,
+      'searching'   : true,
+      'ordering'    : true,
+      'info'        : true,
+      'autoWidth'   : true
+    })
+  })
+</script>
 @endsection

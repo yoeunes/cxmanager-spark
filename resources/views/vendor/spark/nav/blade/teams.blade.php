@@ -20,7 +20,7 @@
                 @if (Auth::user()->current_team_id === $team->id)
                     <i class="fa fa-fw fa-btn fa-check text-success"></i>{{ $team->name }}
                 @else
-                    <img src="{{ $team->photo_url }}" class="spark-team-photo-xs"><i class="fa fa-btn"></i>{{ $team->name }}
+                    <img src="{{ $team->photo_url }}" class="user-image"><i class="fa fa-btn"></i>{{ $team->name }}
                 @endif
             </a>
         </li>

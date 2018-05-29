@@ -1,35 +1,26 @@
-@extends('spark::layouts.app')
+@extends('adminlte::page')
+
+@section('title', 'Cx MNGR')
+
+@section('content_header')
+      <h1>
+        {{ $project->project_title }} - Asset: 
+        <small>{{ $pagetitle }}</small>       
+      </h1>
+      <ol class="breadcrumb">
+        <li><a href="/home"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li><a href="/asset">Assets</a></li>
+        <li class="active">{{ $pagetitle }}</li>
+      </ol>
+@stop
 
 @section('content')
 <home :user="user" inline-template>
     <div class="container">
         <!-- Application Dashboard -->
         <div class="row">
-          <!-- Left Menu -->
-          <div class="col-md-4">
-            <div class="panel panel-success">
-            <div class="panel-heading">
-              <h3 class="panel-title">Project Profile</h3>
-            </div>
-              <div class="panel-body">
-                  <p><img src="/storage/upload/images/{{ $project->thumbnail }}" class="img-rounded" alt="Project Image" width="100%"></p>
-                  <p>
-                    {{ $project->project_notes }}
-                  </p>
-                    <ul style="list-style-type:circle" >
-                      <li><strong>Project #:</strong> {{ $project->project_number }}</li>
-                      <li><strong>Title:</strong> {{ $project->project_title }}</li>
-                      <li><strong>Start Date:</strong> {{ $project->project_start_date }}</li>
-                      <li><strong>End Date</strong> {{ $project->project_end_date }}</li>
-                      <li><strong>% Complete:</strong> {{ $project->project_percent_complete }}</li>
-                    </ul>         
-              </div>  
-            </div>
-          </div>
-          <!-- Left Menu End -->
-
           <!-- Main Content (middle panel) -->
-          <div class="col-md-8">            
+          <div class="col-md-11">            
             <div class="panel panel-primary">
               <div class="panel-heading">
                 <h3 class="panel-title">New Asset</h3> 
@@ -119,4 +110,17 @@
       </div>
     </div>
 </home>
+@endsection
+
+
+@section('adminlte_js')
+    <script>
+      $(document).ready(function() {
+          $('#checklisttable').DataTable();
+      } );
+    </script>
+@endsection
+
+@section('footer')
+  @include('adminlte::partials.footer')
 @endsection

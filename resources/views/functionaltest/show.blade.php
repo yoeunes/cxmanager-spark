@@ -1,32 +1,27 @@
-@extends('spark::layouts.app')
+@extends('adminlte::page')
 
-@section('scripts')
-    <link href='https://cdn.datatables.net/1.10.15/css/jquery.dataTables.min.css' rel='stylesheet' type='text/css'>
-    <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
-    <script src="https://cdn.datatables.net/1.10.15/js/jquery.dataTables.min.js"></script>
-    <script>
-      $(document).ready(function() {
-          $('#questiontable').DataTable();
-      } );
-    </script>
-@endsection
+@section('title', 'Cx MNGR')
+
+@section('content_header')
+      <h1>
+        {{ $project->project_title }} - FPT: 
+        <small>{{ $pagetitle }}</small>       
+      </h1>
+      <ol class="breadcrumb">
+        <li><a href="home"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li><a href="checklist">Asset</a></li>
+        <li class="active">{{ $pagetitle }}</li>
+      </ol>
+@stop
 
 @section('content')
-<home :user="user" inline-template>
-    <div class="container">
         <!-- Application Dashboard -->
         <div class="row">
       
         <div class="col-md-12"> <!-- Main Panel Start -->
-          <div class="panel panel-primary">
-          <div class="panel-heading">
-            <h3 class="panel-title">Functional Performance Test
-                <a href="/home" class="pull-right"><i class="fa fa-home"></i> | </a>
-                <a href="/functionaltest/{{ $asset->id }}/fill"  class="pull-right" role="button"><i class="fa fa-pencil"></i> | </a>
-                <a href="#" class="pull-right"><i class="fa fa-print"></i> | </a>
-            </h3> 
-          </div>         
-            <div class="panel-body">
+          <div class="box box-primary">
+                 
+            <div class="box-body">
               <div class="row"> <!-- Top Row -->
                 <div class="col-md-8">
                   <h3><u>Test:</u> {{ $functionaltest->functionaltest_title }}</h3>
@@ -81,7 +76,5 @@
           </div>
         </div> <!-- Main Panel End -->
         </div>
-      </div>
-    </div>
 </home>
 @endsection

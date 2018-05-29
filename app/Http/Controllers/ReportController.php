@@ -42,6 +42,17 @@ class ReportController extends Controller
         // $this->middleware('subscribed');
     }
 
+    public function index()
+    {
+        $project = Project::where('team_id', Auth::user()->currentTeam->id)->first();
+        if ($project == "")
+        {
+            return view('project.create');
+        }
+
+        return view('report.index', compact('checklist', 'project'));
+    }
+
     public function checklistreport(Checklist $checklist)
     {
         $project = Project::where('team_id', Auth::user()->currentTeam->id)->first();
@@ -64,6 +75,45 @@ class ReportController extends Controller
         // return $assettypes;
 
         // return view('report.checklistoverall', compact('asset', 'project'));
+    }
+
+    public function checklistdetailreport()
+    {
+        $project = Project::where('team_id', Auth::user()->currentTeam->id)->first();
+        $query = DB::table('assets')->where('assets.team_id','=',Auth::user()->currentTeam->id)
+            ->join('checklists', 'assets.id', '=', 'checklists.asset_id')
+            ->select('assets.id','assets.asset_type','assets.asset_tag','assets.asset_status','checklists.asset_id','checklists.checklist_title','checklists.checklist_status','checklists.checklist_contractor')           
+            ->get();
+
+        // return $query;
+        return view('report.checklistdetailbytag', compact('project', 'query'));
+
+    }
+
+    public function checklistsummaryreport()
+    {
+        $project = Project::where('team_id', Auth::user()->currentTeam->id)->first();
+        $query = DB::table('assets')->where('assets.team_id','=',Auth::user()->currentTeam->id)
+            ->join('checklists', 'assets.id', '=', 'checklists.asset_id')
+            ->select('assets.id','assets.asset_type','assets.asset_tag','assets.asset_status','checklists.checklist_title','checklists.checklist_contractor')           
+            ->get();
+
+        // return $query;
+        return view('report.checklistsummaryreportbytag', compact('project', 'query'));
+
+    }
+
+    public function checklistsummaryreportprint()
+    {
+        $project = Project::where('team_id', Auth::user()->currentTeam->id)->first();
+        $query = DB::table('assets')->where('assets.team_id','=',Auth::user()->currentTeam->id)
+            ->join('checklists', 'assets.id', '=', 'checklists.asset_id')
+            ->select('assets.id','assets.asset_type','assets.asset_tag','assets.asset_status','checklists.checklist_title','checklists.checklist_contractor')           
+            ->get();
+
+        // return $query;
+        return view('report.checklistsummaryreportbytag-print', compact('project', 'query'));
+
     }
 
     public function issuereport(Issue $issue)

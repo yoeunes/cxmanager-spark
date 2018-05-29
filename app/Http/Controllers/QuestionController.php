@@ -18,7 +18,7 @@ use App\Project;
 
 use App\Checklist;
 
-use App\Question;
+use App\Checklistquestion;
 
 class QuestionController extends Controller
 {
@@ -46,7 +46,7 @@ class QuestionController extends Controller
         ]);
 
         // Save the question from form values and get the new question id
-        $question = new Question;
+        $question = new Checklistquestion;
         $question->team_id = Auth::user()->currentTeam->id;
         $question->question_text = $request->Input('question_text');
         $question->checklist_id = $request->Input('checklist_id');
@@ -58,7 +58,7 @@ class QuestionController extends Controller
         return back();
     }
 
-    public function edit(Question $question)
+    public function edit(Checklistquestion $question)
     {
     	$project = Project::where('team_id', Auth::user()->currentTeam->id)->first();
 
@@ -67,17 +67,17 @@ class QuestionController extends Controller
 
     // public function store(Checklist $checklist, Request $request)
     // {
-    //     $question = new Question;
+    //     $question = new Checklistquestion;
     // }
 
-    public function update(Question $question, Request $request)
+    public function update(Checklistquestion $question, Request $request)
     {   	
         $question->update($request->all());
 
         return back();
     }
 
-    public function destroy (Question $question)
+    public function destroy (Checklistquestion $question)
     {          
         $question->delete();
         

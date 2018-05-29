@@ -21,7 +21,7 @@ class Checklist extends Model
     
     public function questions()
     {
-    	return $this->hasMany(Question::class);
+    	return $this->hasMany(Checklistquestion::class);
     }
 
 }

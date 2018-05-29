@@ -58,10 +58,10 @@ class Asset extends Model
             $checklistid = DB::getPdo()->lastInsertId(); //get the id of the last checklist
 
             // add questions to each checklist based on the templates
-            $questiontemplates = Questiontemplate::where('checklisttemplate_id', $checklist->id)->get();
+            $questiontemplates = Checklistquestiontemplate::where('checklisttemplate_id', $checklist->id)->get();
 
                 foreach ($questiontemplates as $question) {
-                     $qstn = new Question;
+                     $qstn = new Checklistquestion;
                      $qstn->team_id = Auth::user()->currentTeam->id;
                      $qstn->checklist_id = $checklistid;
                      $qstn->question_text = $question->question_text;

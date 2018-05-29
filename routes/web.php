@@ -64,8 +64,12 @@ Route::resource('functionaltest', 'FunctionaltestController');
 Route::get('/functionaltest/{asset}/fill', 'FunctionaltestController@index');
 
 Route::get('/report/checklist/{checklist}', 'ReportController@checklistreport');
+Route::get('/report', 'ReportController@index');
 Route::get('/report/checklistsuite/{asset}', 'ReportController@checklistsuitereport');
 Route::get('/report/checklistoverallreport', 'ReportController@checklistoverallreport');
+Route::get('/report/checklistdetailreport', 'ReportController@checklistdetailreport');
+Route::get('/report/checklistsummaryreport', 'ReportController@checklistsummaryreport');
+Route::get('/report/checklistsummaryreportprint', 'ReportController@checklistsummaryreportprint');
 Route::get('/report/issue/{issue}', 'ReportController@issuereport');
 Route::get('/report/allissues', 'ReportController@allissuesreport');
 Route::get('/report/unresolvedissues', 'ReportController@unresolvedissuesreport');
@@ -74,3 +78,15 @@ Route::get('/report/detailedissues', 'ReportController@detailedissuesreport');
 
 Route::get('/globaltemplate', 'GlobaltemplateController@index');
 Route::get('/globaltemplate/{templateid}','GlobaltemplateController@show');
+Route::get('/template', 'TemplateController@index');
+Route::post('/template/add', 'TemplateController@store');
+Route::get('/template/{template}', 'TemplateController@show');
+Route::post('/template/createblank', 'TemplateController@createblank');
+Route::post('/checklisttemplate/{templateid}/createblank', 'ChecklisttemplateController@createblank');
+Route::get('/checklisttemplate/{checklisttemplate}', 'ChecklisttemplateController@show');
+
+Route::post('/checklistquestiontemplate/', 'ChecklisttemplateController@questionstore');
+
+Auth::routes();
+
+Route::get('/home', 'HomeController@index')->name('home');

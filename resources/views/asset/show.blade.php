@@ -1,171 +1,252 @@
-@extends('spark::layouts.app')
+@extends('adminlte::page')
 
-@section('scripts')
-    <link href='https://cdn.datatables.net/1.10.15/css/jquery.dataTables.min.css' rel='stylesheet' type='text/css'>
-    <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
-    <script src="https://cdn.datatables.net/1.10.15/js/jquery.dataTables.min.js"></script>
-    <script>
-      $(document).ready(function() {
-          $('#checklisttable').DataTable();
-      } );
-    </script>
-@endsection
+@section('title', 'CxMNGR - Asset Profile')
+
+@section('content_header')
+      <h1>
+        {{ $project->project_title }} - Asset: 
+        <small>{{ $pagetitle }}</small>       
+      </h1>
+      <ol class="breadcrumb">
+        <li><a href="/home"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li><a href="/asset">Assets</a></li>
+        <li class="active">{{ $pagetitle }}</li>
+      </ol>
+@stop
 
 @section('content')
-<home :user="user" inline-template>
-  <div class="container">
-        <!-- Application Dashboard -->
-    <div class="row">      
-      <div class="col-md-9"> <!-- Main Panel Start -->
-          <div class="panel panel-primary">
-          <div class="panel-heading">
-            <h3 class="panel-title">Asset Profile
-                <a class="pull-right" href="/home"><i class="fa fa-home">  |  </i></a>
-                @if(Auth::user()->ownsTeam(Auth::user()->currentTeam))
-                  <a class="pull-right" href="#" role="button" data-toggle="modal" data-target="#editAssetModal"><i class="fa fa-pencil">  |  </i></a>  
-                @elseif(Auth::user()->roleOn(Auth::user()->currentTeam) == 'cxa')
-                  <a class="pull-right" href="#" role="button" data-toggle="modal" data-target="#editAssetModal"><i class="fa fa-pencil">  |  </i></a>
-                @endif                
-                <a class="pull-right" href="/report/checklistsuite/{{ $asset->id }}"><i class="fa fa-print">  |  </i></a> 
-            </h3> 
-          </div>         
-            <div class="panel-body">
-              <div class="row"> <!-- Top Row -->
-                <div class="col-md-6">
-                  <h3><u>Asset:</u> {{ $asset->asset_tag }}</h3>
-                  <ul>
-                    <li><strong>Asset Number:</strong> {{ $asset->asset_number }}</li>
-                    <li><strong>Asset Name:</strong> {{ $asset->asset_title }}</li>
-                    <li><strong>Asset Type:</strong> {{ $asset->asset_type }}</li>
-                    <li><strong>Asset Status:</strong> {{ $asset->asset_status }} %</li>
-                  </ul>
-                </div>
-                <div class="col-md-6">
-                <h4>Asset Notes</h4>
-                  <p>
-                    {{ $asset->asset_notes}}
-                  </p>
-                </div>
-              </div> <!-- Top Row Ends -->
-              <h3>Prefunctional Checklists</h3>
-              <hr>
-              <div class="row"> <!-- Bottom Row -->
-                <div class="col-md-12">
-                  <table id="checklisttable" class="display">
-                    <thead>                   
-                      <tr>
-                        <th>#</th>
-                        <th>Title</th>
-                        <th>Contractor</th>
-                        <th>Status</th>
-                        @if(Auth::user()->ownsTeam(Auth::user()->currentTeam))
-                          <th></th>
-                          <th><a href="#" role="button" data-toggle="modal" data-target="#addChecklistModal">  <i class="fa fa-plus"></i></a></th>
-                        @elseif(Auth::user()->roleOn(Auth::user()->currentTeam) == 'cxa')
-                          <th></th>
-                          <th><a href="#" role="button" data-toggle="modal" data-target="#addChecklistModal">  <i class="fa fa-plus"></i></a></th>
-                        @endif 
-                        
-                      </tr>                 
-                    </thead>
-                    <tbody>
-                    @foreach ( $asset->checklists as $checklist )
-                      <tr>
-                        <td>{{ $checklist->checklist_category_order}}</td>
-                        <td class="text"><a href="/checklist/{{ $checklist->id }}/edit">{{ $checklist->checklist_title }}</a></td>
-                        <td class="text">{{ $checklist->checklist_contractor }}</td>
-                        <td class="text">{{ $checklist->checklist_status }} %</td>
-                        @if(Auth::user()->ownsTeam(Auth::user()->currentTeam))
-                          <td><a href="/checklist/{{ $checklist->id }}" role="button" ><i class="fa fa-pencil"></i> </a></td>
-                          <td> 
-                            <form action="{{ url('checklist/'.$checklist->id) }}" method="POST" class="form-inline">
-                              {{ csrf_field() }}
-                              {{ method_field('DELETE') }}
+<div class="row">
+  <div class="col-md-3">
+    <!-- Profile Image -->
+    <div class="box box-primary">
+      <div class="box-body box-profile">
+        <img class="img-responsive" src="/storage/upload/images/equipment_placeholder.png" alt="User profile picture">
 
-                              <button type="submit" id="delete-checklist-{{ $checklist->id }}" class="btn btn-link">
-                              <i class="fa fa-btn fa-trash"></i></button>
-                            </form>
-                          </td>
-                        @elseif(Auth::user()->roleOn(Auth::user()->currentTeam) == 'cxa')
-                          <td><a href="/checklist/{{ $checklist->id }}" role="button" ><i class="fa fa-pencil"></i> </a></td>
-                          <td> 
-                            <form action="{{ url('checklist/'.$checklist->id) }}" method="POST" class="form-inline">
-                              {{ csrf_field() }}
-                              {{ method_field('DELETE') }}
+        <h3 class="profile-username text-center">{{ $asset->asset_tag }}</h3>
+        <p class="text-muted text-center">{{ $asset->asset_title }}</p>
 
-                              <button type="submit" id="delete-checklist-{{ $checklist->id }}" class="btn btn-link">
-                              <i class="fa fa-btn fa-trash"></i></button>
-                            </form>
-                          </td>
-                        @endif                        
-                      </tr>
-                    @endforeach 
-                    </tbody>
-                </table>
-                <h3>Functional Performance Tests</h3>
-                <hr>
-                  @if( $asset->functionaltests )
-                  <table class="table">
-                    <thead>
+        <!-- <p class="text-muted text-center">Software Engineer</p> -->
+
+        <ul class="list-group list-group-unbordered">
+          <li class="list-group-item">
+            <b># of Checklists</b> <a class="pull-right">{{ $checklistscount }}</a>
+          </li>
+          <li class="list-group-item">
+            <b># of Functional Tests</b> <a class="pull-right">{{ $fptscount }}</a>
+          </li>
+          <li class="list-group-item">
+            <b># of Issues</b> <a class="pull-right">{{ $issuescount }}</a>
+          </li>
+        </ul>
+
+        <!-- <a href="#" class="btn btn-primary btn-block"><b>Follow</b></a> -->
+      </div>
+      <!-- /.box-body -->
+    </div>
+    <!-- /.box -->
+
+    <!-- About Me Box -->
+    <div class="box box-primary">
+      <div class="box-header with-border">
+        <h3 class="box-title">Asset Notes</h3>
+      </div>
+      <!-- /.box-header -->
+      <div class="box-body">
+
+        <p class="text-muted">
+          {{ $asset->asset_notes }}
+        </p>              
+      </div>
+      <!-- /.box-body -->
+    </div>
+    <!-- /.box -->
+  </div> 
+
+  <div class="col-md-9"> <!-- Main Panel Start -->
+    <div class="nav-tabs-custom">
+        <ul class="nav nav-tabs">
+          <li class="active"><a href="#checklists" data-toggle="tab">Checklists</a></li>
+          <li><a href="#fpts" data-toggle="tab">Functional Tests</a></li>
+          <li><a href="#issues" data-toggle="tab">Issues</a></li>
+          <li><a href="#reports" data-toggle="tab">Reports</a></li>
+          <li><a href="#documents" data-toggle="tab">Documents</a></li>
+        </ul>
+        <div class="tab-content">
+          <div class="active tab-pane" id="checklists">
+            <!-- Checklists -->
+                <table id="table1" class="table table-striped">
+                  <thead>                   
+                    <tr>
                       <th>#</th>
-                      <th>Functional Test</th>
+                      <th>Title</th>
+                      <th>Contractor</th>
                       <th>Status</th>
                       @if(Auth::user()->ownsTeam(Auth::user()->currentTeam))
-                        <th><a href="/functionaltest/{{ $asset->id }}/fill">  <i class="fa fa-check-square-o"></i></a></th>
-                        <th><a href="#">  <i class="fa fa-plus"></i></a></th>
+                        <th></th>
+                        <th><a href="#" role="button" data-toggle="modal" data-target="#addChecklistModal">  <i class="fa fa-plus"></i></a></th>
                       @elseif(Auth::user()->roleOn(Auth::user()->currentTeam) == 'cxa')
-                        <th><a href="/functionaltest/{{ $asset->id }}/fill">  <i class="fa fa-check-square-o"></i></a></th>
-                        <th><a href="#">  <i class="fa fa-plus"></i></a></th>
+                        <th></th>
+                        <th><a href="#" role="button" data-toggle="modal" data-target="#addChecklistModal">  <i class="fa fa-plus"></i></a></th>
                       @endif 
-                    </thead>
-                    <tbody>
-                      @foreach( $asset->functionaltests as $fpt )
-                        <tr>
-                          <td>{{ $fpt->functionaltest_category_order }}</td>
-                          <td><a href="/functionaltest/{{ $fpt->id }}">{{ $fpt->functionaltest_title }}</a></td>
-                          <td>{{ $fpt->functionaltest_status }} %</td>
-                          @if(Auth::user()->ownsTeam(Auth::user()->currentTeam))
-                            <td><a href="#"><i class="fa fa-pencil"></i> </a></td>
-                            <td> 
-                              <form action="{{ url('fpt/'.$fpt->id) }}" method="POST" class="form-inline">
-                                {{ csrf_field() }}
-                                {{ method_field('DELETE') }}
+                      
+                    </tr>                 
+                  </thead>
+                  <tbody>
+                  @foreach ( $asset->checklists as $checklist )
+                    <tr>
+                      <td>{{ $checklist->checklist_category_order}}</td>
+                      <td class="text"><a href="/checklist/{{ $checklist->id }}/edit">{{ $checklist->checklist_title }}</a></td>
+                      <td class="text">{{ $checklist->checklist_contractor }}</td>
+                      <td class="text">{{ $checklist->checklist_status }} %</td>
+                      @if(Auth::user()->ownsTeam(Auth::user()->currentTeam))
+                        <td><a href="/checklist/{{ $checklist->id }}" role="button" ><i class="fa fa-pencil"></i> </a></td>
+                        <td> 
+                          <form action="{{ url('checklist/'.$checklist->id) }}" method="POST" class="form-inline">
+                            {{ csrf_field() }}
+                            {{ method_field('DELETE') }}
 
-                                  <button type="submit" id="delete-fpt-{{ $fpt->id }}" class="btn btn-link">
-                                  <i class="fa fa-btn fa-trash"></i></button>
-                                </form>
-                              </td>
-                            @elseif(Auth::user()->roleOn(Auth::user()->currentTeam) == 'cxa')
-                                <td><a href="#"><i class="fa fa-pencil"></i> </a></td>
-                                <td> 
-                                <form action="#" method="POST" class="form-inline">
-                                {{ csrf_field() }}
-                                {{ method_field('DELETE') }}
+                            <button type="submit" id="delete-checklist-{{ $checklist->id }}" class="btn btn-link">
+                            <i class="fa fa-btn fa-trash"></i></button>
+                          </form>
+                        </td>
+                      @elseif(Auth::user()->roleOn(Auth::user()->currentTeam) == 'cxa')
+                        <td><a href="/checklist/{{ $checklist->id }}" role="button" ><i class="fa fa-pencil"></i> </a></td>
+                        <td> 
+                          <form action="{{ url('checklist/'.$checklist->id) }}" method="POST" class="form-inline">
+                            {{ csrf_field() }}
+                            {{ method_field('DELETE') }}
 
-                                <button type="submit" id="delete-fpt-{{ $fpt->id }}" class="btn btn-link">
-                                <i class="fa fa-btn fa-trash"></i></button>
-                                </form>
-                              </td>
-                            @endif    
-                        </tr>
-                      @endforeach
-                    </tbody>
-                  </table>
-                   @else                 
-                    <p>No functional tests setup for this asset. Add FPTs <a href="#">here</a></p>                  
-                  @endif
-                <hr>
-                <p><a class="btn btn-success btn-sm pull-right" href="/asset" role="button"><i class="fa fa-times"></i> Close</a></p> 
-                </div>
-              </div> <!-- Bottom Row Ends  -->                                        
-            </div>
+                            <button type="submit" id="delete-checklist-{{ $checklist->id }}" class="btn btn-link">
+                            <i class="fa fa-btn fa-trash"></i></button>
+                          </form>
+                        </td>
+                      @endif                        
+                    </tr>
+                  @endforeach 
+                  </tbody>
+                </table>
           </div>
-        </div> <!-- Main Panel End -->
-        @include('shared.leftmenu')
+          <!-- /.tab-pane -->
+
+          <div class="tab-pane" id="fpts">
+                <table id="table2" class="table table-striped">
+                  <thead>
+                  <th>#</th>
+                  <th>Functional Test</th>
+                  <th>Status</th>
+                  @if(Auth::user()->ownsTeam(Auth::user()->currentTeam))
+                    <th><a href="/functionaltest/{{ $asset->id }}/fill">  <i class="fa fa-check-square-o"></i></a></th>
+                    <th><a href="#">  <i class="fa fa-plus"></i></a></th>
+                  @elseif(Auth::user()->roleOn(Auth::user()->currentTeam) == 'cxa')
+                    <th><a href="/functionaltest/{{ $asset->id }}/fill">  <i class="fa fa-check-square-o"></i></a></th>
+                    <th><a href="#">  <i class="fa fa-plus"></i></a></th>
+                  @endif 
+                </thead>
+                <tbody>
+                  @foreach( $asset->functionaltests as $fpt )
+                    <tr>
+                      <td>{{ $fpt->functionaltest_category_order }}</td>
+                      <td><a href="/functionaltest/{{ $fpt->id }}">{{ $fpt->functionaltest_title }}</a></td>
+                      <td>{{ $fpt->functionaltest_status }} %</td>
+                      @if(Auth::user()->ownsTeam(Auth::user()->currentTeam))
+                      <td><a href="#"><i class="fa fa-pencil"></i> </a></td>
+                      <td> 
+                        <form action="{{ url('fpt/'.$fpt->id) }}" method="POST" class="form-inline">
+                          {{ csrf_field() }}
+                          {{ method_field('DELETE') }}
+
+                            <button type="submit" id="delete-fpt-{{ $fpt->id }}" class="btn btn-link">
+                            <i class="fa fa-btn fa-trash"></i></button>
+                          </form>
+                      </td>
+                        @elseif(Auth::user()->roleOn(Auth::user()->currentTeam) == 'cxa')
+                        <td><a href="#"><i class="fa fa-pencil"></i> </a></td>
+                        <td> 
+                        <form action="#" method="POST" class="form-inline">
+                        {{ csrf_field() }}
+                        {{ method_field('DELETE') }}
+
+                        <button type="submit" id="delete-fpt-{{ $fpt->id }}" class="btn btn-link">
+                        <i class="fa fa-btn fa-trash"></i></button>
+                        </form>
+                        </td>
+                        @endif    
+                    </tr>
+                  @endforeach
+                </tbody>
+                </table>
+          </div>
+          <!-- /.tab-pane -->
+
+          <div class="tab-pane" id="issues">
+            <!-- The Issues -->
+                <table id="table3" class="table table-striped">
+                  <thead>                  
+                    <tr>
+                      <th>#</th>
+                      <th>Title</th>
+                      <th>Status</th>
+                      @if(Auth::user()->ownsTeam(Auth::user()->currentTeam))
+                      <th></th>
+                      <th></th>  
+                      @elseif(Auth::user()->roleOn(Auth::user()->currentTeam) == 'cxa')
+                      <th></th>
+                      <th></th>
+                      @endif
+                    </tr>                 
+                </thead>
+                <tbody>
+                  @foreach ( $assetissues as $issue )
+                    <tr>
+                      <td>{{ $issue->id }}</td>
+                      <td><a href="/issue/show/{{ $issue->id }}">{{ $issue->issue_title }}</a></td>
+                      <td>{{ $issue->issue_status }}</td>
+                      @if(Auth::user()->ownsTeam(Auth::user()->currentTeam))
+                      <td><a href="/issue/{{ $issue->id }}/edit" role="button" ><i class="fa fa-pencil"></i> </a></td>
+                      <td> 
+                        <form action="{{ url('issue/'.$issue->id) }}" method="POST" class="form-inline">
+                          {{ csrf_field() }}
+                          {{ method_field('DELETE') }}
+
+                          <button type="submit" id="delete-issue-{{ $issue->id }}" class="btn btn-sm btn-link">
+                          <i class="fa fa-btn fa-trash"></i> </button>
+                        </form>
+                      </td>
+                      @elseif(Auth::user()->roleOn(Auth::user()->currentTeam) == 'cxa')
+                      <td><a href="/issue/{{ $issue->id }}/edit" role="button" ><i class="fa fa-pencil"></i> </a></td>
+                      <td> 
+                        <form action="{{ url('issue/'.$issue->id) }}" method="POST" class="form-inline">
+                          {{ csrf_field() }}
+                          {{ method_field('DELETE') }}
+
+                          <button type="submit" id="delete-issue-{{ $issue->id }}" class="btn btn-sm btn-link">
+                          <i class="fa fa-btn fa-trash"></i> </button>
+                        </form>
+                      </td>
+                      @endif
+                    </tr>
+                    @endforeach 
+                  </tbody>
+                </table>
+            <!-- /.box -->
+          </div>
+          <!-- /.tab-pane -->
+
+          <div class="tab-pane" id="reports">
+            <p>Reports table to come</p>
+          </div>
+          <!-- /.tab-pane -->
+
+          <div class="tab-pane" id="documents">
+            <p>Asset documents to come...</p>
+          </div>
+          <!-- /.tab-pane -->
         </div>
+        <!-- /.tab-content -->
       </div>
-    </div>
-</home>
+      <!-- /.nav-tabs-custom -->
+    </div> <!-- Main Panel End -->
+</div>
 <!-- Edit Asset Modal -->
 <div id="editAssetModal" class="modal fade" role="dialog">
   <div class="modal-dialog">
@@ -315,4 +396,8 @@
   </div>
 </div>
 <!-- Modal End -->
+@endsection
+
+@section('footer')
+  @include('adminlte::partials.footer')
 @endsection

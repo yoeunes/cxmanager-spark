@@ -1,8 +1,20 @@
-@extends('spark::layouts.app')
+@extends('adminlte::page')
+
+@section('title', 'Cx MNGR')
+
+@section('content_header')
+      <h1>
+        {{ $project->project_title }} - Issue: 
+        <small>{{ $pagetitle }}</small>       
+      </h1>
+      <ol class="breadcrumb">
+        <li><a href="home"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li><a href="issue">Issues</a></li>
+        <li class="active">{{ $pagetitle }}</li>
+      </ol>
+@stop
 
 @section('content')
-<home :user="user" inline-template>
-    <div class="container">
         <!-- Application Dashboard -->
         <div class="row">
           <!-- Left Menu -->
@@ -10,7 +22,7 @@
           <!-- Left Menu End -->
 
           <!-- Main Content (middle panel) -->
-          <div class="col-md-8">            
+          <div class="col-md-12">            
             <div class="panel panel-primary">
               <div class="panel-heading">
                 <h3 class="panel-title">Edit Issue</h3> 
@@ -134,12 +146,9 @@
          </div>
         <!-- Main Content (middle panel) End -->
 
-
-        <!-- Right Info Panel -->
-        @include('shared.leftmenu')
-        <!-- Right Info Panel End -->
-
       </div>
-    </div>
-</home>
+@endsection
+
+@section('footer')
+  @include('adminlte::partials.footer')
 @endsection

@@ -1,4 +1,18 @@
-@extends('spark::layouts.app')
+@extends('adminlte::page')
+
+@section('title', 'Cx MNGR')
+
+@section('content_header')
+      <h1>
+        {{ $project->project_title }} - Issue: 
+        <small>{{ $pagetitle }}</small>       
+      </h1>
+      <ol class="breadcrumb">
+        <li><a href="/home"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li><a href="/issue">Issues</a></li>
+        <li class="active">{{ $pagetitle }}</li>
+      </ol>
+@stop
 
 @section('content')
 <home :user="user" inline-template>
@@ -9,10 +23,10 @@
 
         <!-- left menu end -->
 
-      <div class="col-md-9">
+      <div class="col-md-11">
           <div class="panel panel-primary">
           <div class="panel-heading">
-            <h3 class="panel-title">Issue Profile
+            <h3 class="panel-title">Issue Detail
                 <a class="pull-right" href="/home"><i class="fa fa-home"> | </i></a>
                 @if(Auth::user()->ownsTeam(Auth::user()->currentTeam) || Auth::user()->roleOn(Auth::user()->currentTeam) == 'cxa')
                   <a class="pull-right" href="/issue/{{ $issue->id }}/edit"><i class="fa fa-pencil"> | </i></a>
@@ -106,7 +120,6 @@
 
         </div>
         <!-- Right Info Panel -->
-        @include('shared.leftmenu')
         <!-- Right Info Panel End -->
       </div>
     </div>
@@ -162,4 +175,8 @@
 
   </div>
 </div>
+@endsection
+
+@section('footer')
+  @include('adminlte::partials.footer')
 @endsection

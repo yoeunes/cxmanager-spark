@@ -24,9 +24,9 @@ use App\Issue;
 
 use App\Checklisttemplate;
 
-use App\Questiontemplate;
+use App\Checklistquestiontemplate;
 
-use App\Question;
+use App\Checklistquestion;
 
 use App\Functionaltest;
 
@@ -54,10 +54,11 @@ class AssetController extends Controller
         $assetscount = Asset::where('team_id', Auth::user()->currentTeam->id)->count();
         $checklistscount = Checklist::where('team_id', Auth::user()->currentTeam->id)->count();
         $assets = Asset::where('team_id', Auth::user()->currentTeam->id)->get();
+        $pagetitle = "All Assets";
 
         // return $assets;
     
-        return view('asset.index', compact('project', 'assets', 'issuescount', 'assetscount', 'checklistscount'));
+        return view('asset.index', compact('project', 'pagetitle', 'assets', 'issuescount', 'assetscount', 'checklistscount'));
     }
 
     
@@ -65,8 +66,9 @@ class AssetController extends Controller
     {
         $project = Project::where('team_id', Auth::user()->currentTeam->id)->first();
         $assettypes = DB::select('select * from assettypes');
+        $pagetitle = "Create Asset";
 
-        return view('asset.create', compact('project', 'assettypes'));
+        return view('asset.create', compact('project', 'pagetitle', 'assettypes'));
     }
 
     
@@ -140,15 +142,15 @@ class AssetController extends Controller
             }
         }
 
-
-        $asset->load('checklists');
-        $asset->load('functionaltests');
-
         $issuescount = Issue::where('team_id', Auth::user()->currentTeam->id)->count();
         $assetscount = Asset::where('team_id', Auth::user()->currentTeam->id)->count();
         $checklistscount = Checklist::where('team_id', Auth::user()->currentTeam->id)->count();
-        
-        return view('asset.show', compact('asset','project', 'issuescount','assetscount','checklistscount'));
+        $assets = Asset::where('team_id', Auth::user()->currentTeam->id)->get();
+        $pagetitle = "All Assets";
+
+        // return $assets;
+    
+        return view('asset.index', compact('project', 'pagetitle', 'assets', 'issuescount', 'assetscount', 'checklistscount'));
     }
 
     /**
@@ -163,11 +165,14 @@ class AssetController extends Controller
         $asset->load('checklists');
         $asset->load('functionaltests');
         // return $asset;
-        $issuescount = Issue::where('team_id', Auth::user()->currentTeam->id)->count();
-        $assetscount = Asset::where('team_id', Auth::user()->currentTeam->id)->count();
-        $checklistscount = Checklist::where('team_id', Auth::user()->currentTeam->id)->count();
+        $issuescount = Issue::where('team_id', Auth::user()->currentTeam->id)->where('asset_id', $asset->id)->count();
+        $fptscount = Functionaltest::where('team_id', Auth::user()->currentTeam->id)->where('asset_id', $asset->id)->count();
+        $checklistscount = Checklist::where('team_id', Auth::user()->currentTeam->id)->where('asset_id', $asset->id)->count();
+        $assetissues = Issue::where('team_id', Auth::user()->currentTeam->id)->where('asset_id', $asset->id)->get();
+        $pagetitle = "Asset Detail";
 
-        return view('asset.show', compact('asset', 'project', 'issuescount','assetscount','checklistscount'));
+
+        return view('asset.show', compact('asset', 'project', 'assetissues', 'pagetitle','issuescount','fptscount','checklistscount'));
     }
 
     /**
@@ -212,7 +217,7 @@ class AssetController extends Controller
     {
         $checklists = Checklist::where('asset_id', $asset->id)->get();
         foreach ($checklists as $checklist) {
-            Question::where('checklist_id', $checklist->id)->delete();
+            Checklistquestion::where('checklist_id', $checklist->id)->delete();
             $checklist->delete();
         }
 

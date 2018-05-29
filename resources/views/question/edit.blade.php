@@ -33,7 +33,7 @@
                   {{ csrf_field() }}
 
                   <div class="form-group">
-                    <label for="question_order" class="col-sm-2 control-label">Oder:</label>
+                    <label for="question_order" class="col-sm-2 control-label">Order:</label>
                     <div class="col-sm-10">
                         <input type="number" name="question_order" class="form-control" id="question_order" value="{{ $question->question_order }}"></input>
                     </div>

@@ -92,9 +92,10 @@ class FunctionaltestController extends Controller
         $project = Project::where('team_id', Auth::user()->currentTeam->id)->first();
         $asset = Asset::where('id', $functionaltest->asset_id )->first();
         $functionaltest->load('functionaltestquestions');
+        $pagetitle = "FPT";
         // return compact('functionaltest', 'asset');
 
-        return view('functionaltest.show', compact('functionaltest', 'project','asset'));
+        return view('functionaltest.show', compact('functionaltest', 'project','asset','pagetitle'));
     }
 
     /**

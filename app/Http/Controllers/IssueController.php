@@ -180,13 +180,14 @@ class IssueController extends Controller
         $issuescount = Issue::where('team_id', Auth::user()->currentTeam->id)->count();
         $assetscount = Asset::where('team_id', Auth::user()->currentTeam->id)->count();
         $checklistscount = Checklist::where('team_id', Auth::user()->currentTeam->id)->count();
+        $pagetitle = "Issue Detail";
 
         $photos = DB::table('images')->where('issue_id', $issue->id)->get();
 
         // ->leftjoin('issuesimages', 'images.id', '=', 'issuesimages.issue_id')
         // ->get();
 
-        return view('issue.show', compact('issue','photos','project','issuescount','assetscount','checklistscount'));
+        return view('issue.show', compact('issue','photos','project','pagetitle','issuescount','assetscount','checklistscount'));
     }
 
     /**
@@ -202,9 +203,10 @@ class IssueController extends Controller
         $issuescount = Issue::where('team_id', Auth::user()->currentTeam->id)->count();
         $assetscount = Asset::where('team_id', Auth::user()->currentTeam->id)->count();
         $checklistscount = Checklist::where('team_id', Auth::user()->currentTeam->id)->count();
+        $pagetitle = "Edit Issue";
         
         // return $issue;
-        return view('issue.edit', compact('issue','project','issuescount','assetscount','checklistscount'));
+        return view('issue.edit', compact('issue','project', 'pagetitle', 'issuescount','assetscount','checklistscount'));
     }
 
     /**

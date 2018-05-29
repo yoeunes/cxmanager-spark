@@ -20,7 +20,7 @@ use App\Asset;
 
 use App\Checklist;
 
-use App\Question;
+use App\Checklistquestion;
 
 class ChecklistController extends Controller
 {
@@ -41,10 +41,11 @@ class ChecklistController extends Controller
         
         $checklists = DB::table('checklists')->where('team_id', Auth::user()->currentTeam->id)->get();
         // $checklists->load('asset');
+        $pagetitle = "All Checklists";
     
         
 
-        return view('checklist.index', compact('project','checklists'));
+        return view('checklist.index', compact('project', 'pagetitle', 'checklists'));
     }
 
     public function show(Checklist $checklist)
@@ -52,10 +53,11 @@ class ChecklistController extends Controller
         $project = Project::where('team_id', Auth::user()->currentTeam->id)->first();
         $checklist->load('asset');
         $checklist->load('questions');
-        $commentscount = Question::where('checklist_id', $checklist->id )->where('answer_comment', '<>', '')->count();
+        $commentscount = Checklistquestion::where('checklist_id', $checklist->id )->where('answer_comment', '<>', '')->count();
         // return $checklist;
+        $pagetitle = "Customize Checklist";
 
-        return view('checklist.show', compact('checklist', 'project', 'commentscount'));
+        return view('checklist.show', compact('checklist', 'pagetitle', 'project', 'commentscount'));
     }
 
     public function edit( Checklist $checklist )
@@ -63,11 +65,12 @@ class ChecklistController extends Controller
         $project = Project::where('team_id', Auth::user()->currentTeam->id)->first();
         $checklist->load('asset')->load('questions');
         $contractors = DB::table('contractors')->get();
-        $commentscount = Question::where('checklist_id', $checklist->id )->where('answer_comment', '<>', '')->count();
+        $commentscount = Checklistquestion::where('checklist_id', $checklist->id )->where('answer_comment', '<>', '')->count();
+        $pagetitle = "Fill Checklist";
 
         // return $checklist->checklist_contractor;
 
-        return view('checklist.edit', compact('project','checklist','contractors', 'commentscount'));
+        return view('checklist.edit', compact('project', 'pagetitle','checklist','contractors', 'commentscount'));
     }
 
     public function store(Request $request)
@@ -75,7 +78,7 @@ class ChecklistController extends Controller
         // dd(request()->all());
         $project = Project::where('team_id', Auth::user()->currentTeam->id)->first();
         $checklist = Checklist::where('id', $request->Input('checklistid'))->get();
-        $questions = Question::where('checklist_id', $request->Input('checklistid'))->get();
+        $questions = Checklistquestion::where('checklist_id', $request->Input('checklistid'))->get();
         // return $checklist;
 
         // Save Checklist Data
@@ -125,7 +128,7 @@ class ChecklistController extends Controller
         // dd(request()->all());
         $checklist->update($request->all());
 
-        $questions = Question::where('checklist_id', $checklist->id)->get();
+        $questions = Checklistquestion::where('checklist_id', $checklist->id)->get();
 
         // Save Questions Data
         foreach ($questions as $question)
@@ -157,7 +160,7 @@ class ChecklistController extends Controller
         }
 
         // Update Question Status
-        $questions =  Question::where('checklist_id', $checklist->id)->get();
+        $questions =  Checklistquestion::where('checklist_id', $checklist->id)->get();
 
         foreach ($questions as $question)
         {
@@ -171,8 +174,8 @@ class ChecklistController extends Controller
         }
 
         // Update checklist status       
-            $numerator = Question::where('checklist_id', $checklist->id)->where( 'question_status', 1 )->count();
-            $denominator = Question::where('checklist_id', $checklist->id)->count();
+            $numerator = Checklistquestion::where('checklist_id', $checklist->id)->where( 'question_status', 1 )->count();
+            $denominator = Checklistquestion::where('checklist_id', $checklist->id)->count();
             $percentage = ($numerator/$denominator) * 100;
             $checklist->checklist_status = number_format($percentage, 2); 
             $checklist->update();
@@ -192,7 +195,7 @@ class ChecklistController extends Controller
     public function destroy (Checklist $checklist)
     {
             
-        Question::where('checklist_id', $checklist->id)->delete();           
+        Checklistquestion::where('checklist_id', $checklist->id)->delete();           
         $checklist->delete();
         
         return back();

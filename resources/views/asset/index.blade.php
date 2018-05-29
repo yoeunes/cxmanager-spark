@@ -1,44 +1,80 @@
-@extends('spark::layouts.app')
+@extends('adminlte::page')
 
-@section('scripts')
-    <link href='https://cdn.datatables.net/1.10.15/css/jquery.dataTables.min.css' rel='stylesheet' type='text/css'>
-    <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
-    <script src="https://cdn.datatables.net/1.10.15/js/jquery.dataTables.min.js"></script>
-    <script>
-      $(document).ready(function() {
-          $('#assettable').DataTable();
-      } );
-    </script>
-@endsection
+@section('title', 'Cx MNGR')
+
+@section('content_header')
+      <h1>
+        {{ $project->project_title }} - Assets: 
+        <small>{{ $pagetitle }}</small>       
+      </h1>
+      <ol class="breadcrumb">
+        <li><a href="/home"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li><a href="/asset">Assets</a></li>
+        <li class="active">{{ $pagetitle }}</li>
+      </ol>
+@stop
 
 @section('content')
-<home :user="user" inline-template>
-  <div class="container">
-    <!-- Application Dashboard -->
-    <div class="row">
-      <div class="col-md-9">
-        <div class="panel panel-primary">
-          <div class="panel-heading">
-                <h3 class="panel-title">Assets
-                  @if(Auth::user()->ownsTeam(Auth::user()->currentTeam))
-                    <a href="/asset/create" class="pull-right"><i class="fa fa-plus"></i></a>
-                  @elseif(Auth::user()->roleOn(Auth::user()->currentTeam) == 'cxa')
-                    <a href="/asset/create" class="pull-right"><i class="fa fa-plus"></i></a>
-                  @endif
-                </h3>
+      <div class="row">
+        <div class="col-md-3">
+          <!-- Profile Image -->
+          <div class="box box-primary">
+            <div class="box-body box-profile">
+              <img class="img-responsive img-square" src="{{ Auth::user()->currentTeam->photo_url }}" alt="User profile picture">
+
+              <h3 class="profile-username text-center">{{ $project->project_title }}</h3>
+
+              <!-- <p class="text-muted text-center">Software Engineer</p> -->
+
+              <ul class="list-group list-group-unbordered">
+                <li class="list-group-item">
+                  <b># of Issues</b> <a class="pull-right">{{ $issuescount }}</a>
+                </li>
+                <li class="list-group-item">
+                  <b># of Assets</b> <a class="pull-right">{{ $assetscount }}</a>
+                </li>
+                <li class="list-group-item">
+                  <b># of Checklists</b> <a class="pull-right">{{ $checklistscount }}</a>
+                </li>
+              </ul>
+
+              <!-- <a href="#" class="btn btn-primary btn-block"><b>Follow</b></a> -->
+            </div>
+            <!-- /.box-body -->
           </div>
-          <div class="panel-body">          
-                  <table id="assettable" class="display">
-                    <thead>                 
+          <!-- /.box -->
+
+          <!-- About Me Box -->
+          <div class="box box-primary">
+            <div class="box-header with-border">
+              <h3 class="box-title">About this Project</h3>
+            </div>
+            <!-- /.box-header -->
+            <div class="box-body">
+
+              <p class="text-muted">
+                {{ $project->project_notes }}
+              </p>            
+            </div>
+            <!-- /.box-body -->
+          </div>
+          <!-- /.box -->
+        </div>
+        <div class="col-md-9">
+          <div class="box box-primary">
+            <!-- /.box-header -->
+            <div class="box-body">
+              <table id="assettable" class="table table-hover">
+                <thead>                 
                       <tr>
                         <th>Tag</th>
                         <th>Asset Name</th>
                         <th>Type</th>
                         <th>%</th>
                         @if(Auth::user()->ownsTeam(Auth::user()->currentTeam))
-                          <th></th>
+                          <th><a href="asset/create" role="button"><i class="fa fa-plus"></i></a></th>
                         @elseif(Auth::user()->roleOn(Auth::user()->currentTeam) == 'cxa')
-                          <th></th>
+                          <th><a href="asset/create" role="button"><i class="fa fa-plus"></i></a></th>
                         @endif
                       </tr>                 
                     </thead>
@@ -71,14 +107,28 @@
                       </tr>
                     @endforeach 
                     </tbody>
-                  </table>
-                  <hr>
-                  <p><a class="btn btn-success btn-sm pull-right" href="/home" role="button"><i class="fa fa-times"></i> Close</a></p> 
+              </table>
+            </div>
           </div>
         </div>
-      </div>      
-      @include('shared.leftmenu') 
-    </div>      
-  </div>
-</home>
+      </div>
+@endsection
+
+@section('footer')
+  @include('adminlte::partials.footer')
+@endsection
+
+@section('page_scripts')
+<script>
+  $(function () {
+    $('#assettable').DataTable({
+      'paging'      : true,
+      'lengthChange': true,
+      'searching'   : true,
+      'ordering'    : true,
+      'info'        : true,
+      'autoWidth'   : true
+    })
+  })
+</script>
 @endsection
