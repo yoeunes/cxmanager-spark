@@ -36,6 +36,9 @@
                 <li class="list-group-item">
                   <b># of Checklists</b> <a class="pull-right">{{ $checklistscount }}</a>
                 </li>
+                <li class="list-group-item">
+                  <b>Project Status:</b> <a class="pull-right">{{ $project->project_percent_complete }}%</a>
+                </li>
               </ul>
 
               <!-- <a href="#" class="btn btn-primary btn-block"><b>Follow</b></a> -->
@@ -81,11 +84,11 @@
                             <th>Contractor</th>
                             <th>Type</th>
                             @if(Auth::user()->ownsTeam(Auth::user()->currentTeam) && $template->template_type == 'project')
-                              <th></th>
                               <th><a href="#" role="button" data-toggle="modal" data-target="#addBlankChecklistTemplateModal">  <i class="fa fa-plus"></i></a></th>
                             @elseif(Auth::user()->roleOn(Auth::user()->currentTeam) == 'cxa' && $template->template_type == 'project')
-                              <th></th>
                               <th><a href="#" role="button" data-toggle="modal" data-target="#addBlankChecklistTemplateModal">  <i class="fa fa-plus"></i></a></th>
+                            @elseif(Auth::user()->email = 'ngray@energymanagementconsulting.com' && $template->template_type == 'global')
+                              <th><a href="#" role="button" data-toggle="modal" data-target="#addBlankChecklistTemplateModal">  <i class="fa fa-plus"></th>
                             @endif 
                             
                           </tr>                 
@@ -98,7 +101,6 @@
                             <td class="text">{{ $checklist->checklist_contractor }}</td>
                             <td class="text">{{ $checklist->checklist_type }}</td>
                             @if(Auth::user()->ownsTeam(Auth::user()->currentTeam) && $template->template_type == 'project')
-                              <td><a href="#" role="button" ><i class="fa fa-pencil"></i> </a></td>
                               <td> 
                                 <form action="{{ url('checklisttemplate/'.$checklist->id) }}" method="POST" class="form-inline">
                                   {{ csrf_field() }}
@@ -109,7 +111,16 @@
                                 </form>
                               </td>
                             @elseif(Auth::user()->roleOn(Auth::user()->currentTeam) == 'cxa' && $template->template_type == 'project')
-                              <td><a href="#" role="button" ><i class="fa fa-pencil"></i> </a></td>
+                              <td> 
+                                <form action="{{ url('checklisttemplate/'.$checklist->id) }}" method="POST" class="form-inline">
+                                  {{ csrf_field() }}
+                                  {{ method_field('DELETE') }}
+
+                                  <button type="submit" id="delete-checklisttemplate-{{ $checklist->id }}" class="btn btn-link">
+                                  <i class="fa fa-btn fa-trash"></i></button>
+                                </form>
+                              </td>
+                            @elseif(Auth::user()->email = 'ngray@energymanagementconsulting.com' && $template->template_type == 'global')
                               <td> 
                                 <form action="{{ url('checklisttemplate/'.$checklist->id) }}" method="POST" class="form-inline">
                                   {{ csrf_field() }}
@@ -141,10 +152,13 @@
                       <th>Type</th>
                       @if(Auth::user()->ownsTeam(Auth::user()->currentTeam) && $template->template_type == 'project')
                         <th><a href="#">  <i class="fa fa-check-square-o"></i></a></th>
-                        <th><a href="#">  <i class="fa fa-plus"></i></a></th>
+                        <th><a href="#" role="button" data-toggle="modal" data-target="#addBlankFPTTemplateModal">  <i class="fa fa-plus"></i></a></th>
                       @elseif(Auth::user()->roleOn(Auth::user()->currentTeam) == 'cxa' && $template->template_type == 'project')
-                        <th><a href="#">  <i class="fa fa-check-square-o"></i></a></th>
-                        <th><a href="#">  <i class="fa fa-plus"></i></a></th>
+                        <th></th>
+                        <th><a href="#" role="button" data-toggle="modal" data-target="#addBlankFPTTemplateModal">  <i class="fa fa-plus"></i></a></th>
+                      @elseif(Auth::user()->email = 'ngray@energymanagementconsulting.com' && $template->template_type == 'global')
+                        <th></th>
+                        <th><a href="#" role="button" data-toggle="modal" data-target="#addBlankFPTTemplateModal">  <i class="fa fa-plus"></i></a></th>
                       @endif 
                     </thead>
                     <tbody>
@@ -175,6 +189,17 @@
                             <i class="fa fa-btn fa-trash"></i></button>
                             </form>
                             </td>
+                            @elseif(Auth::user()->email = 'ngray@energymanagementconsulting.com' && $template->template_type == 'global')
+                              <td><a href="#"><i class="fa fa-pencil"></i> </a></td>
+                              <td> 
+                              <form action="#" method="POST" class="form-inline">
+                              {{ csrf_field() }}
+                              {{ method_field('DELETE') }}
+
+                              <button type="submit" id="delete-fpt-{{ $fpt->id }}" class="btn btn-link">
+                              <i class="fa fa-btn fa-trash"></i></button>
+                              </form>
+                              </td>
                             @endif    
                         </tr>
                       @endforeach
@@ -196,13 +221,6 @@
                 </div>
               </div>
               <!-- /.tab-pane -->
-              @if($template->template_type == 'global' || $template->template_type == 'user')
-                <form  method="POST" action="/template/add">
-                {{ csrf_field() }}
-                  <input type="checkbox" name="gtempl-{{ $template->id }}" checked="checked" style="opacity:0; position:absolute; left:9999px;">
-                  <button type="submit" class="btn btn-primary">Add to Project</button>
-                </form>
-              @endif
             </div>
             <!-- /.tab-content -->
           </div>
@@ -251,6 +269,73 @@
                  <label for="checklist_notes" class="col-sm-2 control-label">Notes</label>
                    <div class="col-sm-10">
                  <textarea name="checklist_notes" class="form-control" id="checklist_notes" rows="5"></textarea>
+                 </div>
+               </div>
+
+               <div class="form-group">
+               <div class="col-sm-offset-2 col-sm-10">
+              <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+               <button type="submit" class="btn btn-primary pull-right">Add</button>
+               </div>
+               </div>
+         </form>
+      </div>
+      <div class="modal-footer">
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Modal End -->      
+
+<!-- Add Blank FPT Template Modal -->
+<div id="addBlankFPTTemplateModal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Add FPT Template</h4>
+      </div>
+      <div class="modal-body">
+          <form class="form-horizontal" method="POST" action="/funtionaltesttemplate/{{ $template->id }}/createblank">
+               {{ csrf_field() }} 
+
+               <input type="hidden" name="template_id" value="{{ $template->id }}">
+
+               <input type="hidden" name="funtionaltest_type" value="{{ $template->template_type }}">
+
+               <div class="form-group">
+               <label for="funtionaltest_title" class="col-sm-2 control-label">Title</label>
+               <div class="col-sm-10">
+               <input type="text" name="funtionaltest_title" id="funtionaltest_title" class="form-control" placeholder="Enter Title for funtionaltest" required></input>
+               </div>
+               </div>
+
+               <div class="form-group">
+               <label for="funtionaltest_tag" class="col-sm-2 control-label">Tag</label>
+               <div class="col-sm-10">
+               <input type="text" name="funtionaltest_tag" id="funtionaltest_tag" class="form-control" placeholder="Enter tag for funtionaltest" required></input>
+               </div>
+               </div>
+
+               <div class="form-group">
+               <label for="functionaltest_contractor" class="col-sm-2 control-label">Contractor</label>
+               <div class="col-sm-10">
+               <input type="text" name="functionaltest_contractor" id="functionaltest_contractor" class="form-control" placeholder="eg. Mechanical Contractor" required></input>
+               </div>
+               </div>
+
+               <div class="form-group">
+               <label for="functionaltest_category_order" class="col-sm-2 control-label">Order</label>
+               <div class="col-sm-10">
+               <input type="text" name="functionaltest_category_order" id="functionaltest_category_order" class="form-control" placeholder="Enter Number" required></input>
+               </div>
+               </div>
+
+               <div class="form-group">
+                 <label for="functionaltest_notes" class="col-sm-2 control-label">Notes</label>
+                   <div class="col-sm-10">
+                 <textarea name="functionaltest_notes" class="form-control" id="functionaltest_notes" rows="5"></textarea>
                  </div>
                </div>
 

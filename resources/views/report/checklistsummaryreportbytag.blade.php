@@ -39,22 +39,23 @@
             <thead>
             <tr>
               <th>Asset Type</th>
-              <th>Asset Tag</th>
-              <th>Contractor</th>
+              <th># of Assets</th>
               <th>Status</th>
             </tr>
             </thead>
             <tbody>
             @foreach ($query as $asset)
-              @if ( $asset->checklist_title == "Model Verification" )
                 <tr>
-                    <td>{{ $asset->asset_type }}</td>
-                    <td>{{ $asset->asset_tag }}</td>
-                    <td>{{ $asset->checklist_contractor }}</td> 
-                    <td>{{ $asset->asset_status }}</td>                       
+                    <td>{{ $asset['asset_type'] }}</td>
+                    <td>{{ $asset['asset_count']}}</td>
+                    <td>{{ $asset['asset_status'] }} %</td>                       
                 </tr>
-              @endif  
-            @endforeach   
+            @endforeach 
+            <tr>
+              <td><strong>Total</strong></td>
+              <td><strong>{{ $totalassetscount }}</strong></td>
+              <td><strong>{{ $totalassetsstatus}} %</strong></td>
+            </tr>  
             </tbody>
           </table>
         </div>

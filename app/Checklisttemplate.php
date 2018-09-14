@@ -9,6 +9,7 @@ use DB;
 
 class Checklisttemplate extends Model
 {
+    protected $fillable = ['team_id','template_id','assettype_id','checklist_title','checklist_type','checklist_tag','checklist_contractor', 'checklist_status','checklist_category_order','checklist_notes'];
 
     public function template()
     {

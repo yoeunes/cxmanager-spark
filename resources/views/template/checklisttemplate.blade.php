@@ -15,7 +15,7 @@
 @stop
 
 @section('content')
-        <div class="row">     
+    <div class="row">     
       <div class="col-md-12"> <!-- Main Panel Start -->
           <div class="panel panel-primary">
                  
@@ -41,61 +41,41 @@
               <hr>
               <div class="row"> <!-- Bottom Row -->
                 <div class="col-md-12">
-                <form class="form-horizontal" method="POST" action="/checklisttemplate/{{ $checklisttemplate->id }}">
-                    {{ csrf_field() }}
-                    {{ method_field('PATCH') }}
-                    <input type="hidden" name="checklisttemplateid" value="{{ $checklisttemplate->id }}"> 
 
-                    @if ( $checklisttemplate->checklist_title == "Model Verification" )
-                    <table id="checklisttable" class="table">
-                        <thead><tr>
-                            <th>Question</th>
-                            <th>Design</th>
-                            <th>Submittal</th>
-                            <th>Delivered <a href="#" role="button" data-toggle="modal" data-target="#newQuestionModal"><i class="fa fa-plus pull-right"></i></a></th>
-                            </tr>
-                        </thead> 
-                        <tbody>     
-                            @foreach (  $checklisttemplate->checklistquestiontemplate as $question )
-                            <input type="hidden" name="questionid-{{ $question->id }}" value="{{ $question->id }}"> 
-                            <tr tr class="accordion-toggle info" data-toggle="collapse" data-target="#collapse{{ $question->id }}" >
-                                <td>{{ $question->question_order}}. {{ $question->question_text}}</td>                         
-                                <td><input type="text" name="{{$question->id}}-answer_design" class="form-control" placeholder="Design" value="{{ $question->answer_design }}"></td>
-                                <td><input type="text" name="{{$question->id}}-answer_submitted" class="form-control" placeholder="Submittal" value="{{ $question->answer_submitted }}"></td>
-                                <td><input type="text" name="{{$question->id}}-answer_installed" class="form-control" placeholder="Delivered" value="{{ $question->answer_installed }}"></td>                     
-                            </tr>
+                      <table class="table table-striped">
+                        <thead>
+                          <th>#</th>
+                          <th>Question</th>
+                          @if(Auth::user()->email = 'ngray@energymanagementconsulting.com')
+                            <th><a href="#" data-toggle="modal" data-target="#newQuestionModal"> <i class="fa fa-plus"></i></a></th>
+                            <th><a href="#" data-toggle="modal" data-target="#editChecklistModal"> <i class="fa fa-pencil"></i></a></th>
+                          @endif 
+                        </thead>
+                        <tbody>
+                          @foreach (  $checklisttemplate->checklistquestiontemplate as $question )
                             <tr>
-                                <td></td>
-                                <td colspan="3">
-                                    <div id="collapse{{ $question->id }}" @if( $question->answer_comment ) class="collapse in" @else class="collapse" @endif >
-                                    <input type="text" name="{{$question->id}}-answer_comment" class="form-control" placeholder="Comments" value="{{ $question->answer_comment }}">
-                                    </div>
-                                </td>
+                              <td>{{ $question->question_order}}</td>
+                              <td>{{ $question->question_text}}</td>
+                              @if(Auth::user()->email = 'ngray@energymanagementconsulting.com')
+                                <td><a href="/checklisttemplatequestion/editquestion/{{ $question->id }}"><i class="fa fa-pencil"></i></a></td>
+                                <td> 
+                                <form action="{{ url('checklisttemplatequestion/'.$question->id) }}" method="POST" class="form-inline">
+                                  {{ csrf_field() }}
+                                  {{ method_field('DELETE') }}
+
+                                  <button type="submit" id="delete-checklisttemplatequestion-{{ $question->id }}" class="btn btn-link">
+                                  <i class="fa fa-btn fa-trash"></i></button>
+                                </form>
+                              </td>
+                              @endif 
                             </tr>
-                            @endforeach
-                        </tbody> 
-                    </table>
-                    @else
-                    <ul class="list-group">
-                        @foreach (  $checklisttemplate->checklistquestiontemplate as $question )
-                        <li class="list-group-item">{{ $question->question_order}}. {{ $question->question_text}}
-                        <div class="input-group">
-                            <span class="input-group-addon">
-                                    <input type="checkbox" name="{{$question->id}}-answer_accepted" value="Yes" @if(old("{{$question->id}}-answer_accepted", $question->answer_accepted) == 'Yes' )  checked='checked' @endif >
-                            </span>
-                            <input type="text" name="{{$question->id}}-answer_comment" class="form-control" placeholder="Comments" value="{{ $question->answer_comment }}">
-                        </div>
-                        </li>
-                        @endforeach
-                    </ul>
-                    @endif
+                          @endforeach
+                        </tbody>
+                      </table>
                     <p>
-                    <button type="submit" class="btn btn-default">Submit</button>
                      <a class="btn btn-info btn-sm pull-right" href="#" role="button" data-toggle="modal" data-target="#newQuestionModal"><i class="fa fa-plus"></i> Add Question</a>
                     <a class="btn btn-success btn-sm pull-right" href="/template/{{ $checklisttemplate->template->id }}" role="button"><i class="fa fa-times"></i> Close</a>
                     </p> 
-                        
-                {{ Form::close() }}
                 </div>  
               </div> <!-- Bottom Row Ends  -->                                        
             </div>
@@ -136,6 +116,91 @@
                 <div class="form-group">
                 <div class="col-sm-offset-2 col-sm-10">
                 <button type="submit" class="btn btn-primary pull-right">Add</button>
+                </div>
+                </div>
+          </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+<!-- Modal End -->
+
+<!-- Edit Checklist Modal -->
+<div id="editChecklistModal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Edit Checklist Template</h4>
+      </div>
+      <div class="modal-body">
+          <form class="form-horizontal" method="POST" action="/checklisttemplate/{{ $checklisttemplate->id }}">
+               {{ method_field('PATCH')}}
+               {{ csrf_field() }}
+
+               <input type="hidden" name="team_id" value="{{ $checklisttemplate->team_id }}"> 
+
+               <input type="hidden" name="asset_id" value="{{ $checklisttemplate->template_id }}"> 
+
+               <input type="hidden" name="checklist_id" value="{{ $checklisttemplate->assettype_id }}"> 
+
+                <div class="form-group">
+                <label for="checklist_title" class="col-sm-2 control-label">Name</label>
+                <div class="col-sm-10">
+                <input type="text" name="checklist_title" id="checklist_title" class="form-control" value="{{ $checklisttemplate->checklist_title }}"></input>
+                </div>
+                </div>
+
+                <div class="form-group">
+                <label for="checklist_tag" class="col-sm-2 control-label">Tag</label>
+                <div class="col-sm-10">
+                <input type="text" name="checklist_tag" id="checklist_tag" class="form-control" value="{{ $checklisttemplate->checklist_tag }}"></input>
+                </div>
+                </div>
+
+                <div class="form-group">
+                <label for="checklist_contractor" class="col-sm-2 control-label">Contractor</label>
+                <div class="col-sm-10">
+                <input type="text" name="checklist_contractor" id="checklist_contractor" class="form-control" value="{{ $checklisttemplate->checklist_contractor }}"></input>
+                </div>
+                </div>
+
+                <div class="form-group">
+                <label for="checklist_status" class="col-sm-2 control-label">Status</label>
+                <div class="col-sm-10">
+                <input type="text" name="checklist_status" id="checklist_status" class="form-control" value="{{ $checklisttemplate->checklist_status }}"></input>
+                </div>
+                </div>
+
+                <div class="form-group">
+                <label for="checklist_type" class="col-sm-2 control-label">Type</label>
+                <div class="col-sm-10">
+                <input type="text" name="checklist_type" id="checklist_type" class="form-control" value="{{ $checklisttemplate->checklist_type }}"></input>
+                </div>
+                </div>
+
+                <div class="form-group">
+                <label for="checklist_category_order" class="col-sm-2 control-label">Order</label>
+                <div class="col-sm-10">
+                <input type="text" name="checklist_category_order" id="checklist_category_order" class="form-control" value="{{ $checklisttemplate->checklist_category_order }}"></input>
+                </div>
+                </div>
+
+                <div class="form-group">
+                  <label for="checklist_notes" class="col-sm-2 control-label">Notes</label>
+                    <div class="col-sm-10">
+                  <textarea name="checklist_notes" class="form-control" id="checklist_notes" rows="5">{{ $checklisttemplate->checklist_notes }}</textarea>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                <div class="col-sm-offset-2 col-sm-10">
+                <button type="submit" class="btn btn-primary pull-right">Update</button>
                 </div>
                 </div>
           </form>

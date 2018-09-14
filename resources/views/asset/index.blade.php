@@ -36,6 +36,9 @@
                 <li class="list-group-item">
                   <b># of Checklists</b> <a class="pull-right">{{ $checklistscount }}</a>
                 </li>
+                <li class="list-group-item">
+                  <b>Project Status:</b> <a class="pull-right">{{ $project->project_percent_complete }}%</a>
+                </li>
               </ul>
 
               <!-- <a href="#" class="btn btn-primary btn-block"><b>Follow</b></a> -->

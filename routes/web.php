@@ -75,6 +75,7 @@ Route::get('/report/allissues', 'ReportController@allissuesreport');
 Route::get('/report/unresolvedissues', 'ReportController@unresolvedissuesreport');
 Route::get('/report/resolvedissues', 'ReportController@resolvedissuesreport');
 Route::get('/report/detailedissues', 'ReportController@detailedissuesreport');
+Route::get('/report/assetsummary/{asset}', 'ReportController@assetsummary');
 
 Route::get('/globaltemplate', 'GlobaltemplateController@index');
 Route::get('/globaltemplate/{templateid}','GlobaltemplateController@show');
@@ -82,10 +83,19 @@ Route::get('/template', 'TemplateController@index');
 Route::post('/template/add', 'TemplateController@store');
 Route::get('/template/{template}', 'TemplateController@show');
 Route::post('/template/createblank', 'TemplateController@createblank');
+Route::delete('/template/{template}', 'TemplateController@destroy');
+Route::get('template/{template}/edit', 'TemplateController@edit');
+Route::patch('template/{template}', 'TemplateController@update');
 Route::post('/checklisttemplate/{templateid}/createblank', 'ChecklisttemplateController@createblank');
 Route::get('/checklisttemplate/{checklisttemplate}', 'ChecklisttemplateController@show');
+Route::delete('/checklisttemplate/{checklist}', 'ChecklisttemplateController@destroy');
+Route::patch('/checklisttemplate/{checklisttemplate}', 'ChecklisttemplateController@update');
+Route::delete('checklisttemplatequestion/{question}', 'ChecklisttemplateController@destroyquestion');
+Route::get('checklisttemplatequestion/editquestion/{question}', 'ChecklisttemplateController@editquestion');
+Route::patch('checklisttemplatequestion/{question}', 'ChecklisttemplateController@updatequestion');
 
 Route::post('/checklistquestiontemplate/', 'ChecklisttemplateController@questionstore');
+Route::post('/funtionaltesttemplate/{template}/createblank','FunctionaltesttemplateController@createblank');
 
 Auth::routes();
 

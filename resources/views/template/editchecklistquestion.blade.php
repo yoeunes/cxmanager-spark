@@ -4,13 +4,13 @@
 
 @section('content_header')
       <h1>
-        {{ $project->project_title }} - Checklist: 
-        <small>{{ $pagetitle }}</small>       
+        Checklist Template: 
+        <small>Edit Question</small>       
       </h1>
       <ol class="breadcrumb">
         <li><a href="home"><i class="fa fa-dashboard"></i> Home</a></li>
-        <li><a href="checklist">Checklists</a></li>
-        <li class="active">{{ $pagetitle }}</li>
+        <li><a href="checklisttemplate/{ $question->checklisttemplate_id }">Template</a></li>
+        <li class="active">Edit Checklist Question</li>
       </ol>
 @stop
 
@@ -24,7 +24,7 @@
         </div>
 
         <div class="panel-body">
-           <form class="form-horizontal" method="POST" action="/question/{{ $question->id }}">
+           <form class="form-horizontal" method="POST" action="/checklisttemplatequestion/{{ $question->id }}">
               {{ method_field('PATCH')}}
               {{ csrf_field() }}
 
@@ -44,7 +44,7 @@
 
                   <div class="form-group">
                     <div class="col-sm-offset-2 col-sm-10">
-                    <a class="btn btn-danger btn-sm" href="/checklist/{{ $question->checklist_id }}">Close</a>
+                    <a class="btn btn-danger btn-sm" href="/checklisttemplate/{{ $question->checklisttemplate_id }}">Close</a>
                     <button type="submit" class="btn btn-primary pull-right">Update Question</button>
                     </div>
                   </div>

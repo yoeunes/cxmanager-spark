@@ -38,8 +38,9 @@
         <img src="/img/CxManager_logo_big.png" style="height: 32px;">
           <small class="pull-right">Date: {{ date('m-d-Y') }}</small>
         </h2>
-        <h4><strong>Project Status:</strong> {{ $project->project_title }}</h4>
-        <strong>Project Status - Checklist:</strong> {{ $project->project_percent_complete }}%
+        <h4><strong>Project:</strong> {{ $project->project_title }}</h4>
+        <strong>Asset Tag:</strong> {{ $asset->asset_tag }} ({{ $asset->asset_title }}) <br>
+        <strong>Asset Status:</strong> {{ $asset->asset_status }}%
       </div>
       <!-- /.col -->
     </div>    
@@ -50,24 +51,21 @@
           <table class="table table-striped">
             <thead>
             <tr>
-              <th>Asset Type</th>
-              <th># of Assets</th>
+              <th>#</th>
+              <th>Title</th>
+              <th>Contractor</th>
               <th>Status</th>
             </tr>
             </thead>
             <tbody>
-            @foreach ($query as $asset)
+            @foreach ($asset->checklists as $cklst)
                 <tr>
-                    <td>{{ $asset['asset_type'] }}</td>
-                    <td>{{ $asset['asset_count']}}</td>
-                    <td>{{ $asset['asset_status'] }} %</td>                       
+                    <td>{{ $cklst->id }}</td>
+                    <td>{{ $cklst->checklist_title }}</td>
+                    <td>{{ $cklst->checklist_contractor }}</td>   
+                    <td>{{ $cklst->checklist_status }}</td>                    
                 </tr>
-            @endforeach 
-            <tr>
-              <td><strong>Total</strong></td>
-              <td><strong>{{ $totalassetscount }}</strong></td>
-              <td><strong>{{ $totalassetsstatus}} %</strong></td>
-            </tr>  
+            @endforeach
             </tbody>
           </table>
         </div>

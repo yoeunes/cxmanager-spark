@@ -16,7 +16,7 @@
         <tbody>     
             @foreach ( $checklist->questions as $question )
             <input type="hidden" name="questionid-{{ $question->id }}" value="{{ $question->id }}"> 
-            <tr tr class="accordion-toggle info" data-toggle="collapse" data-target="#collapse{{ $question->id }}" >
+            <tr>
                 <td>{{ $question->question_order}}. {{ $question->question_text}}</td>                         
                 <td><input type="text" name="{{$question->id}}-answer_design" class="form-control" placeholder="Design" value="{{ $question->answer_design }}"></td>
                 <td><input type="text" name="{{$question->id}}-answer_submitted" class="form-control" placeholder="Submittal" value="{{ $question->answer_submitted }}"></td>

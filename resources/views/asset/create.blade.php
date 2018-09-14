@@ -62,8 +62,7 @@
                           @endforeach
                           </select>
                         </div>
-                        
-                      </div>
+                       </div>
 
                       <div class="form-group">
                         <label for="include_fpt" class="col-sm-2 control-label">Include FPTs</label>

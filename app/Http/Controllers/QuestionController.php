@@ -61,8 +61,9 @@ class QuestionController extends Controller
     public function edit(Checklistquestion $question)
     {
     	$project = Project::where('team_id', Auth::user()->currentTeam->id)->first();
+        $pagetitle = "Edit Question";
 
-    	return view('question.edit', compact('question','project'));
+    	return view('question.edit', compact('question','project','pagetitle'));
     }
 
     // public function store(Checklist $checklist, Request $request)

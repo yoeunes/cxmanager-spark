@@ -53,6 +53,18 @@ class ReportController extends Controller
         return view('report.index', compact('checklist', 'project'));
     }
 
+    public function assetsummary(Asset $asset)
+    {
+        $project = Project::where('team_id', Auth::user()->currentTeam->id)->first();
+        $asset->load('checklists');
+        $asset->load('functionaltests');
+        // return $asset;
+        $pagetitle = "Asset Detail";
+
+
+        return view('report.assetsummary', compact('asset', 'project'));
+    }
+
     public function checklistreport(Checklist $checklist)
     {
         $project = Project::where('team_id', Auth::user()->currentTeam->id)->first();
@@ -93,26 +105,63 @@ class ReportController extends Controller
     public function checklistsummaryreport()
     {
         $project = Project::where('team_id', Auth::user()->currentTeam->id)->first();
-        $query = DB::table('assets')->where('assets.team_id','=',Auth::user()->currentTeam->id)
-            ->join('checklists', 'assets.id', '=', 'checklists.asset_id')
-            ->select('assets.id','assets.asset_type','assets.asset_tag','assets.asset_status','checklists.checklist_title','checklists.checklist_contractor')           
-            ->get();
+        $alist = Asset::where('team_id', Auth::user()->currentTeam->id)->pluck('asset_type');
+        $uniquelist= $alist->unique();
+        $query = [];
 
-        // return $query;
-        return view('report.checklistsummaryreportbytag', compact('project', 'query'));
+        $totalassetscount = Asset::where('team_id', Auth::user()->currentTeam->id)->count();
+        $totalassetssum = Asset::where('team_id', Auth::user()->currentTeam->id)->sum('asset_status');
+        if($totalassetscount>0){
+           $totalassetstatusraw = ($totalassetssum/$totalassetscount); 
+       }else{
+        $totalassetstatusraw = 0;
+       }
+        
+        $totalassetsstatus = number_format($totalassetstatusraw, 2);
+
+        //update the project
+        $project->project_percent_complete = $totalassetsstatus;
+        $project->update();
+
+        foreach ($uniquelist as $ulist) {
+            $assetcount = Asset::where('team_id', Auth::user()->currentTeam->id)->where('asset_type', $ulist)->count();
+            $assetsum = Asset::where('team_id', Auth::user()->currentTeam->id)->where('asset_type', $ulist)->sum('asset_status');            
+            if($assetcount > 0){
+                $assetstatusraw = ($assetsum/$assetcount);
+            }else{
+                $assetstatusraw = 0;
+            }
+            $assetstatus = number_format($assetstatusraw, 2);
+            $query[] = ['asset_type'=> $ulist, 'asset_count'=>$assetcount, 'asset_status'=>$assetstatus];
+        }
+
+        
+        return view('report.checklistsummaryreportbytag', compact('project', 'query', 'totalassetscount', 'totalassetsstatus'));
 
     }
 
     public function checklistsummaryreportprint()
     {
         $project = Project::where('team_id', Auth::user()->currentTeam->id)->first();
-        $query = DB::table('assets')->where('assets.team_id','=',Auth::user()->currentTeam->id)
-            ->join('checklists', 'assets.id', '=', 'checklists.asset_id')
-            ->select('assets.id','assets.asset_type','assets.asset_tag','assets.asset_status','checklists.checklist_title','checklists.checklist_contractor')           
-            ->get();
+        $alist = Asset::where('team_id', Auth::user()->currentTeam->id)->pluck('asset_type');
+        $uniquelist= $alist->unique();
+        $query = [];
 
-        // return $query;
-        return view('report.checklistsummaryreportbytag-print', compact('project', 'query'));
+        $totalassetscount = Asset::where('team_id', Auth::user()->currentTeam->id)->count();
+        $totalassetssum = Asset::where('team_id', Auth::user()->currentTeam->id)->sum('asset_status');
+        $totalassetstatusraw = ($totalassetssum/$totalassetscount);
+        $totalassetsstatus = number_format($totalassetstatusraw, 2);
+
+        foreach ($uniquelist as $ulist) {
+            $assetcount = Asset::where('team_id', Auth::user()->currentTeam->id)->where('asset_type', $ulist)->count();
+            $assetsum = Asset::where('team_id', Auth::user()->currentTeam->id)->where('asset_type', $ulist)->sum('asset_status');
+            $assetstatusraw = ($assetsum/$assetcount);
+            $assetstatus = number_format($assetstatusraw, 2);
+            $query[] = ['asset_type'=> $ulist, 'asset_count'=>$assetcount, 'asset_status'=>$assetstatus];
+        }
+
+        
+        return view('report.checklistsummaryreportbytag-print', compact('project', 'query', 'totalassetscount', 'totalassetsstatus'));
 
     }
 

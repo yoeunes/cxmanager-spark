@@ -36,6 +36,9 @@
                 <li class="list-group-item">
                   <b># of Checklists</b> <a class="pull-right">{{ $checklistscount }}</a>
                 </li>
+                <li class="list-group-item">
+                  <b>Project Status:</b> <a class="pull-right">{{ $project->project_percent_complete }}%</a>
+                </li>
               </ul>
 
               <!-- <a href="#" class="btn btn-primary btn-block"><b>Follow</b></a> -->
@@ -77,11 +80,12 @@
                         <tr>
                           <th>Template Name</th>
                           <th>Status</th>
-                          <th>
                           @if(Auth::user()->ownsTeam(Auth::user()->currentTeam) || Auth::user()->roleOn(Auth::user()->currentTeam) == 'cxa')
+                          <th>
                             <a href="#" role="button" data-toggle="modal" data-target="#createBlankTemplateModal">  <i class="fa fa-plus"></i></a>
-                          @endif
                           </th>
+                          <th></th>
+                          @endif
                         </tr>                 
                       </thead>
                         <tbody>
@@ -89,7 +93,17 @@
                             <tr>
                               <td><a href="/template/{{ $projtempl->id }}">{{ $projtempl->template_name }}</a></td>
                               <td>{{ $projtempl->status }}</td>
-                              <td></td>
+                                @if(Auth::user()->ownsTeam(Auth::user()->currentTeam) || Auth::user()->roleOn(Auth::user()->currentTeam) == 'cxa')
+                              <td>
+                                  <form action="{{ url('template/'.$projtempl->id) }}" method="POST" class="form-inline">
+                                    {{ csrf_field() }}
+                                    {{ method_field('DELETE') }}                     
+                                    <button type="submit" id="delete-template-{{ $projtempl->id }}" class="btn btn-sm btn-link">
+                                    <i class="fa fa-btn fa-trash"></i></button>
+                                  </form>
+                              </td>
+                              <td><a href="/template/{{ $projtempl->id }}/edit" role="button">  <i class="fa fa-pencil"></i></a></td>
+                                @endif
                             </tr>
                           @endforeach                     
                         </tbody>
@@ -109,7 +123,11 @@
                       <tr>
                         <th>Template Name</th>
                         <th>Status</th>
-                        <th>Actions</th>
+                        <th></th>
+                        <th>
+                          <a href="#" role="button" data-toggle="modal" data-target="#createBlankTemplateModal">  <i class="fa fa-plus"></i></a>
+                        </th>
+                        <th></th>
                       </tr>                 
                     </thead>
                       <tbody>
@@ -117,7 +135,25 @@
                           <tr>
                             <td><a href="#">{{ $utempl->template_name }}</a></td>
                             <td>{{ $utempl->status }}</td>
-                            <td></td>
+                              <td>
+                               <!-- checkbox -->
+                                <div class="form-group">
+                                  <label>
+                                    <input name="utempl-{{ $utempl->id }}" type="checkbox" class="minimal">
+                                  </label>
+                                </div>
+                              </td>
+                              @if(Auth::user()->id == $utempl->user_id )
+                                <td>
+                                      <form action="{{ url('template/'.$utempl->id) }}" method="POST" class="form-inline">
+                                        {{ csrf_field() }}
+                                        {{ method_field('DELETE') }}                     
+                                        <button type="submit" id="delete-template-{{ $utempl->id }}" class="btn btn-sm btn-link">
+                                        <i class="fa fa-btn fa-trash"></i></button>
+                                      </form>
+                                </td>
+                                <td><a href="/template/{{ $utempl->id }}/edit" role="button">  <i class="fa fa-pencil"></i></a></td>
+                              @endif
                           </tr>
                         @endforeach                     
                       </tbody>
@@ -139,7 +175,13 @@
                         <tr>
                           <th>Template Name</th>
                           <th>Status</th>
-                          <th>Actions</th>
+                          <th></th>
+                          @if(Auth::user()->email = 'ngray@energymanagementconsulting.com')
+                          <th>
+                            <a href="#" role="button" data-toggle="modal" data-target="#createBlankTemplateModal">  <i class="fa fa-plus"></i></a>
+                          </th>
+                          <th></th>                         
+                          @endif
                         </tr>                 
                       </thead>
                         <tbody>
@@ -155,6 +197,18 @@
                                   </label>
                                 </div>
                               </td>
+                              @if(Auth::user()->email = 'ngray@energymanagementconsulting.com')
+                                <td>
+                                  <form action="{{ url('template/'.$gtempl->id) }}" method="POST" class="form-inline">
+                                    {{ csrf_field() }}
+                                    {{ method_field('DELETE') }}                     
+                                    <button type="submit" id="delete-template-{{ $gtempl->id }}" class="btn btn-sm btn-link">
+                                    <i class="fa fa-btn fa-trash"></i></button>
+                                  </form>
+                                </td>
+                                <td><a href="/template/{{ $gtempl->id }}/edit" role="button">  <i class="fa fa-pencil"></i></a></td>
+                                @endif
+                              
                             </tr>
                           @endforeach                     
                         </tbody>
@@ -192,6 +246,16 @@
                <input type="text" name="template_name" id="template_name" class="form-control" placeholder="Enter Name for Template" required></input>
                </div>
                </div>
+
+              <div class="form-group">
+                <label for="template_type" class="col-sm-2 control-label">Template Type</label>
+                <div class="col-sm-10">
+                  <select class="field" name="template_type" id="template_type">
+                    <option value="global">Global Template</option>
+                    <option value="project">Project Template</option>
+                    <option value="user">User Template</option>
+                  </select>
+                </div>
               
                <div class="form-group">
                <div class="col-sm-offset-2 col-sm-10">

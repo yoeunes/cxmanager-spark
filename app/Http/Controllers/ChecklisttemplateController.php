@@ -78,6 +78,30 @@ class ChecklisttemplateController extends Controller
         return back();
     }
 
+    public function editquestion(Checklistquestiontemplate $question)
+    {
+        return view('template.editchecklistquestion', compact('question'));
+    }
+
+    public function update(Checklisttemplate $checklisttemplate, Request $request)
+    {
+        // dd(request()->all());
+        $checklisttemplate->update($request->all());
+
+        return back();
+    }
+
+    public function updatequestion(Checklistquestiontemplate $question, Request $request)
+    {
+        // dd(request()->all());
+        $question->question_text = $request->Input('question_text');
+        $question->question_order = $request->Input('question_order');
+
+        $question->update();
+
+        return back();
+    }
+
     public function questionstore(Request $request)
     {
         // dd(request()->all());
@@ -95,6 +119,21 @@ class ChecklisttemplateController extends Controller
         $question->question_order = $request->Input('question_order');
 
         $question->save();
+
+        return back();
+    }
+
+    public function destroy(Checklisttemplate $checklist)
+    {
+        Checklistquestiontemplate::where('checklisttemplate_id', $checklist->id)->delete();
+        $checklist->delete();
+
+        return back();
+    }
+
+    public function destroyquestion(Checklistquestiontemplate $question)
+    {
+        $question->delete();
 
         return back();
     }

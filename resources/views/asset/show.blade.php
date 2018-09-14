@@ -29,6 +29,9 @@
 
         <ul class="list-group list-group-unbordered">
           <li class="list-group-item">
+            <b>Asset ID</b> <a class="pull-right">{{ $asset->id }}</a>
+          </li>
+          <li class="list-group-item">
             <b># of Checklists</b> <a class="pull-right">{{ $checklistscount }}</a>
           </li>
           <li class="list-group-item">
@@ -36,6 +39,9 @@
           </li>
           <li class="list-group-item">
             <b># of Issues</b> <a class="pull-right">{{ $issuescount }}</a>
+          </li>
+          <li class="list-group-item">
+            <b>Project Status:</b> <a class="pull-right">{{ $project->project_percent_complete }}%</a>
           </li>
         </ul>
 
@@ -70,6 +76,7 @@
           <li><a href="#issues" data-toggle="tab">Issues</a></li>
           <li><a href="#reports" data-toggle="tab">Reports</a></li>
           <li><a href="#documents" data-toggle="tab">Documents</a></li>
+          <li><a href="/report/assetsummary/{{ $asset->id }}"><i class="fa fa-print"></i></a></li>
         </ul>
         <div class="tab-content">
           <div class="active tab-pane" id="checklists">

@@ -33,7 +33,7 @@
                   </ul>
                 </div>
                 <div class="col-md-6">
-                <h4>Checklist Notes</h4>
+                <h4>Checklist Notes <a href="/report/checklist/{{ $checklist->id }}" class="pull-right"><i class="fa fa-print"></i></a></h4>
                   <p>
                     {{ $checklist->checklist_notes}}
                   </p>

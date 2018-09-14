@@ -2,6 +2,11 @@
 
 @section('title', 'CxMNGR - home')
 
+@section('page_stylesheets')
+    <!-- Chart JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.min.js"></script>
+@endsection
+
 @section('content_header')
 <h1>
     Dashboard 
@@ -62,13 +67,13 @@
         <div class="col-md-9">
           <div class="nav-tabs-custom">
             <ul class="nav nav-tabs">
-              <li class="active"><a href="#assets" data-toggle="tab">Assets</a></li>
+              <li><a href="#assets" data-toggle="tab">Assets</a></li>
               <li><a href="#issues" data-toggle="tab">Issues</a></li>
               <li><a href="#templates" data-toggle="tab">Templates</a></li>
-              <li><a href="#reports" data-toggle="tab">Reports</a></li>
+              <li class="active"><a href="#charts" data-toggle="tab">Charts</a></li>
             </ul>
             <div class="tab-content">
-              <div class="active tab-pane" id="assets">
+              <div class="tab-pane" id="assets">
                 <!-- Assets -->
                 <div class="panel panel-primary">                 
                   <div class="panel-body">
@@ -95,25 +100,6 @@
                   </div>
                   <!-- /.panel-body -->
                 </div>
-                <!-- /.panel -->
-                <!-- DONUT CHART -->
-                <!-- <div class="box box-primary">
-                  <div class="box-header with-border">
-                    <h3 class="box-title">Assets by Discipline</h3>
-
-                    <div class="box-tools pull-right">
-                      <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
-                      </button>
-                      <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
-                    </div>
-                  </div>
-                  <div class="box-body">
-                    <canvas id="pieChart" style="height:250px"></canvas>
-                  </div>
-                  <!-- /.box-body -->
-                <!-- </div> -->
-                <!-- /.box -->
-                <!-- /.assets -->
               </div>
               <!-- /.tab-pane -->
 
@@ -179,8 +165,46 @@
               </div>
               <!-- /.tab-pane -->
 
-              <div class="tab-pane" id="reports">
-                <p>Reports table</p>
+              <div class="active tab-pane" id="charts">
+                <h3>Charts</h3>
+                <row>
+                  <!-- DONUT CHART -->
+                    <div class="box box-info">
+                      <div class="box-header with-border">
+                        <h3 class="box-title">Issues by Status</h3>
+
+                        <div class="box-tools pull-right">
+                          <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+                          </button>
+                          <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+                        </div>
+                      </div>
+                      <div class="box-body">
+                      <canvas id="unresolvedIssuesByDiscipline" height="150"></canvas>
+                      </div>
+                      <!-- /.box-body -->
+                    </div>
+                    <!-- /.box -->
+
+                    <div class="box box-info">
+                      <div class="box-header with-border">
+                        <h3 class="box-title">Checklist Remaining by Discipline</h3>
+
+                        <div class="box-tools pull-right">
+                          <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+                          </button>
+                          <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+                        </div>
+                      </div>
+                      <div class="box-body">
+                      <canvas id="checklistRemainingByDiscipline" height="150"></canvas>
+                      </div>
+                      <!-- /.box-body -->
+                    </div>
+                    <!-- /.box -->
+
+                </row>
+
               </div>
               <!-- /.tab-pane -->
             </div>
@@ -191,6 +215,105 @@
         <!-- /.col -->
       </div>
       <!-- /.row -->
+
+<script>
+var issrem = document.getElementById("unresolvedIssuesByDiscipline").getContext('2d');
+var myChart = new Chart(issrem, {
+    type: 'doughnut',
+    data: {
+        labels: ["Unresolved", "Resolved", "Closed", "Cancelled", "Pending"],
+        datasets: [{
+            label: 'Issues by Status',
+            data: [{{ $issuesunres }}, {{ $issuesres }}, {{ $issuesclosed }}, {{ $issuescanceled }}, {{ $issuespending}}],
+            backgroundColor: [
+                'rgba(255, 99, 132, 0.2)',
+                'rgba(54, 162, 235, 0.2)',
+                'rgba(255, 206, 86, 0.2)',
+                'rgba(75, 192, 192, 0.2)',
+                'rgba(153, 102, 255, 0.2)'
+            ],
+            borderColor: [
+                'rgba(255,99,132,1)',
+                'rgba(54, 162, 235, 1)',
+                'rgba(255, 206, 86, 1)',
+                'rgba(75, 192, 192, 1)',
+                'rgba(153, 102, 255, 1)'
+            ],
+            borderWidth: 1
+        }]
+    },
+    options: {
+    }
+});
+
+var clrem = document.getElementById("checklistRemainingByDiscipline").getContext('2d');
+var myChart = new Chart(clrem, {
+    type: 'horizontalBar',
+    data: {
+        labels: ["Mechanical", "Electrical", "Plumbing", "Controls", "TAB"],
+        datasets: [{
+            label: 'Total Checklist',
+            data: [ {{ $totclmech }}, {{ $totclelec }}, {{ $totclplumb }}, {{ $totclcontr }}, {{ $totcltab }}
+            ],
+            backgroundColor: [
+                'rgba(255, 99, 132, 0.2)',
+                'rgba(255, 99, 132, 0.2)',
+                'rgba(255, 99, 132, 0.2)',
+                'rgba(255, 99, 132, 0.2)',
+                'rgba(255, 99, 132, 0.2)'
+            ],
+            borderColor: [
+                'rgba(255,99,132,1)',
+                'rgba(255,99,132,1)',
+                'rgba(255,99,132,1)',
+                'rgba(255,99,132,1',
+                'rgba(255,99,132,1)'
+            ],
+            borderWidth: 1
+        },
+        {
+            label: 'Completed Checklist',
+            data: [{{ $complclmech }}, {{ $complclelec }}, {{ $complclplumb }}, {{ $complclcontr }}, {{ $complcltab }}],
+            backgroundColor: [
+                'rgba(54, 162, 235, 0.2',
+                'rgba(54, 162, 235, 0.2)',
+                'rgba(54, 162, 235, 0.2)',
+                'rgba(54, 162, 235, 0.2)',
+                'rgba(54, 162, 235, 0.2)'
+            ],
+            borderColor: [
+                'rgba(54, 162, 235, 1)',
+                'rgba(54, 162, 235, 1)',
+                'rgba(54, 162, 235, 1)',
+                'rgba(54, 162, 235, 1)',
+                'rgba(54, 162, 235, 1)'
+            ],
+            borderWidth: 1
+        },
+        {
+            label: 'Remaining Checklist',
+            data: [{{ $remclmech }}, {{ $remclelec }}, {{ $remclplumb }}, {{ $remclcontr }}, {{ $remcltab }}],
+            backgroundColor: [
+                'rgba(255, 206, 86, 0.2)',
+                'rgba(255, 206, 86, 0.2)',
+                'rgba(255, 206, 86, 0.2)',
+                'rgba(255, 206, 86, 0.2)',
+                'rgba(255, 206, 86, 0.2)'
+            ],
+            borderColor: [
+                'rgba(255,99,132,1)',
+                'rgba(255,99,132,1)',
+                'rgba(255,99,132,1)',
+                'rgba(255,99,132,1)',
+                'rgba(255,99,132,1)'
+            ],
+            borderWidth: 1
+        }]
+    },
+    options: {
+    }
+});
+</script>
 @stop
 
 @section('footer')

@@ -51,8 +51,7 @@ class ChecklistController extends Controller
     public function show(Checklist $checklist)
     {
         $project = Project::where('team_id', Auth::user()->currentTeam->id)->first();
-        $checklist->load('asset');
-        $checklist->load('questions');
+        $checklist->load('asset')->load('questions');
         $commentscount = Checklistquestion::where('checklist_id', $checklist->id )->where('answer_comment', '<>', '')->count();
         // return $checklist;
         $pagetitle = "Customize Checklist";
